@@ -4,16 +4,16 @@ export default function Hero({ scrollProgress }) {
   const titleRef = useRef(null);
 
   // 1. WELCOME 7-Letter Explosion Trajectories (Scroll 0.04 to 0.40)
-  // Each letter shatters & flies in a unique 3D vector direction (top-left, bottom-left, straight up, etc.)
+  // Each letter shatters & flies in a unique 3D direction
   const welcomeLetters = ['W', 'E', 'L', 'C', 'O', 'M', 'E'];
   const letterVectors = [
-    { x: -160, y: -90,  r: -45, scale: 1.4 }, // W -> Top-Left
-    { x: -100, y: -150, r: 35,  scale: 0.8 }, // E -> Upper-Left
-    { x: -140, y: 110,  r: -60, scale: 1.3 }, // L -> Bottom-Left
-    { x: 0,    y: -190, r: 15,  scale: 2.1 }, // C -> Straight Up Explosion
-    { x: 130,  y: 120,  r: 45,  scale: 1.1 }, // O -> Bottom-Right
-    { x: 100,  y: -140, r: -35, scale: 0.9 }, // M -> Upper-Right
-    { x: 170,  y: -80,  r: 65,  scale: 1.5 }, // E -> Top-Right
+    { x: -160, y: -90, r: -45, scale: 1.4 }, // W -> Top-Left
+    { x: -100, y: -150, r: 35, scale: 0.8 }, // E -> Upper-Left
+    { x: -140, y: 110, r: -60, scale: 1.3 }, // L -> Bottom-Left
+    { x: 0, y: -190, r: 15, scale: 2.1 }, // C -> Straight Up Explosion
+    { x: 130, y: 120, r: 45, scale: 1.1 }, // O -> Bottom-Right
+    { x: 100, y: -140, r: -35, scale: 0.9 }, // M -> Upper-Right
+    { x: 170, y: -80, r: 65, scale: 1.5 }, // E -> Top-Right
   ];
 
   let welcomeProgress = 0;
@@ -27,58 +27,89 @@ export default function Hero({ scrollProgress }) {
 
   const welcomeOpacity = Math.max(0, 1 - welcomeProgress * 1.35);
 
-  // 2. BADAL VARSHNEY Title Emergence & Extended Crisp Hold (Scroll 0.35 to 0.93)
-  // Emerges from cloud mist (0.35 to 0.55) and STAYS 100% crisp, sharp, unblurred, and clear from 0.55 all the way to 0.93!
-  let heroOpacity = 0;
-  let heroScale = 0.75;
-  let heroBlur = 14;
-  let heroY = 60;
+  // 2. BADAL VARSHNEY 3D CENTER ZOOM & 360-DEGREE MULTI-DIRECTION EXPANSION (Scroll 0.42 to 1.00)
+  const badalLetters = ['B', 'A', 'D', 'A', 'L'];
+  const badalVectors = [
+    { x: -170, y: -140, r: -55, scale: 5.2 }, // B -> Top-Left
+    { x: -130, y: 130, r: 45, scale: 4.8 }, // A -> Bottom-Left
+    { x: -10, y: -190, r: 15, scale: 5.6 }, // D -> Straight Up
+    { x: 150, y: -150, r: 60, scale: 5.0 }, // A -> Top-Right
+    { x: 180, y: 120, r: -40, scale: 4.7 }  // L -> Bottom-Right
+  ];
 
-  if (scrollProgress <= 0.35) {
+  const varshneyLetters = ['V', 'A', 'R', 'S', 'H', 'N', 'E', 'Y'];
+  const varshneyVectors = [
+    { x: -210, y: -40, r: -75, scale: 5.4 }, // V -> Far Middle-Left
+    { x: 190, y: -130, r: 50, scale: 4.9 }, // A -> Top-Far-Right
+    { x: -160, y: 180, r: -35, scale: 5.3 }, // R -> Deep Bottom-Left
+    { x: -90, y: -170, r: -25, scale: 4.6 }, // S -> Upper-Left
+    { x: 80, y: 190, r: 35, scale: 5.5 }, // H -> Deep Bottom-Center-Right
+    { x: 195, y: 140, r: 65, scale: 5.1 }, // N -> Bottom-Far-Right
+    { x: -140, y: -110, r: -45, scale: 4.7 }, // E -> Upper-Left Diagonal
+    { x: 220, y: 30, r: 80, scale: 5.8 }  // Y -> Far Middle-Right
+  ];
+
+  // Calculate Zoom & Emergence Parameters based on Scroll
+  let heroOpacity = 0;
+  let heroBlur = 0;
+  let centerZoomProgress = 0; // 0 = start emergence, 1 = focused in center
+  let flythroughProgress = 0; // 0 = at center focus, 1 = full hyper zoom flythrough
+
+  if (scrollProgress <= 0.38) {
     heroOpacity = 0;
-    heroScale = 0.75;
-    heroBlur = 14;
-    heroY = 60;
-  } else if (scrollProgress > 0.35 && scrollProgress <= 0.55) {
-    const p = (scrollProgress - 0.35) / 0.20;
+    centerZoomProgress = 0;
+    flythroughProgress = 0;
+    heroBlur = 20;
+  } else if (scrollProgress > 0.38 && scrollProgress <= 0.62) {
+    // Stage 1: Emergence from deep center fog, zooming in to center stage (0.38 -> 0.62)
+    const p = (scrollProgress - 0.38) / 0.24;
+    centerZoomProgress = p;
+    flythroughProgress = 0;
     heroOpacity = p;
-    heroScale = 0.75 + p * 0.25;
-    heroBlur = 14 * (1 - p);
-    heroY = 60 * (1 - p);
-  } else if (scrollProgress > 0.55 && scrollProgress <= 0.93) {
-    // Extended Crisp Hold Phase: BADAL VARSHNEY stays 100% clear, 0 blur, 1.0 opacity for long scroll duration
+    heroBlur = 20 * (1 - p);
+  } else if (scrollProgress > 0.62 && scrollProgress <= 0.76) {
+    // Stage 2: Sharp focal hold at screen center (0.62 -> 0.76)
+    centerZoomProgress = 1;
+    flythroughProgress = 0;
     heroOpacity = 1;
-    heroScale = 1.0;
     heroBlur = 0;
-    heroY = 0;
   } else {
-    const p = (scrollProgress - 0.93) / 0.07;
-    heroOpacity = Math.max(0, 1 - p * 2.0);
-    heroScale = 1.0 + p * 0.05;
-    heroBlur = p * 4;
-    heroY = -p * 30;
+    // Stage 3: Hyper 3D Zoom & 360° Shatter Flythrough outward from center (0.76 -> 0.90)
+    centerZoomProgress = 1;
+    const p = (scrollProgress - 0.76) / 0.14;
+    flythroughProgress = p;
+    heroOpacity = p > 0.6 ? Math.max(0, 1 - (p - 0.6) / 0.4) : 1;
+    heroBlur = p * 5;
   }
 
-  // Scroll prompt opacity: visible at initial WELCOME view (0 to 0.22)
-  const scrollPromptOpacity = Math.max(0, 1 - scrollProgress * 4.5);
+  // Base scale during emergence (zooms in from center: 0.2 -> 1.0)
+  const emergenceScale = 0.2 + centerZoomProgress * 0.8;
+
+  // Subtitle & Buttons Opacity during hyper zoom flythrough
+  const subContentOpacity = flythroughProgress > 0
+    ? Math.max(0, 1 - flythroughProgress * 2.2)
+    : heroOpacity;
+
+  // Scroll prompt opacity
+  const scrollPromptOpacity = Math.max(0, 1 - scrollProgress * 3.5);
 
   return (
-    <section id="cloud-hero-trigger" className="relative min-h-[320vh] w-full">
+    <section id="cloud-hero-trigger" className="relative min-h-[350vh] w-full">
       {/* Sticky Hero Viewport */}
       <div className="sticky top-0 h-screen w-full flex flex-col justify-between items-center px-6 md:px-12 py-20 overflow-hidden z-20">
-        
+
         {/* Top Spacer */}
         <div className="h-10"></div>
 
-        {/* 7-LETTER 3D EXPLOSION SHATTER CONTAINER */}
+        {/* 1. WELCOME 7-LETTER 3D EXPLOSION SHATTER CONTAINER */}
         <div
-          className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none transition-all duration-75 ease-out px-2"
+          className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none transition-all duration-75 ease-out px-2"
           style={{
             opacity: welcomeOpacity,
             display: welcomeOpacity > 0.01 ? 'flex' : 'none'
           }}
         >
-          <div className="flex items-center justify-center font-display font-extrabold tracking-tighter text-3xl sm:text-6xl md:text-8xl lg:text-[11rem] uppercase select-none text-white drop-shadow-[0_15px_40px_rgba(255,255,255,0.4)]">
+          <div className="flex items-center justify-center font-display font-black tracking-tighter text-4xl sm:text-7xl md:text-9xl lg:text-[11rem] uppercase select-none text-white drop-shadow-[0_20px_60px_rgba(255,255,255,0.5)]">
             {welcomeLetters.map((char, index) => {
               const vec = letterVectors[index];
               const lx = vec.x * welcomeProgress;
@@ -99,32 +130,88 @@ export default function Hero({ scrollProgress }) {
               );
             })}
           </div>
+          <p
+            className="font-mono text-xs sm:text-base tracking-[0.4em] sm:tracking-[0.6em] text-zinc-300 uppercase mt-4 bg-black/40 px-6 py-2 rounded-full border border-white/20 backdrop-blur-md transition-opacity duration-150"
+            style={{ opacity: Math.max(0, 1 - welcomeProgress * 2) }}
+          >
+            TO THE CLOUD EXPERIENCE
+          </p>
         </div>
 
-        {/* Dynamic BADAL VARSHNEY Emergence Section */}
-        <div className="text-center max-w-7xl mx-auto my-auto z-20 transition-all duration-100 ease-out px-3">
-          <div className="mb-3">
-            <h1
-              ref={titleRef}
-              className="font-display font-extrabold tracking-tight uppercase leading-none select-none drop-shadow-[0_10px_35px_rgba(255,255,255,0.35)] text-white flex flex-col items-center justify-center gap-1 sm:gap-2"
-              style={{
-                transform: `scale(${heroScale}) translateY(${heroY}px)`,
-                opacity: heroOpacity,
-                filter: `blur(${heroBlur}px)`,
-                pointerEvents: heroOpacity > 0.4 ? 'auto' : 'none'
-              }}
-            >
-              <span className="text-4xl sm:text-6xl md:text-8xl lg:text-[8.5rem] tracking-tighter">BADAL</span>
-              <span className="text-2.5xl sm:text-5xl md:text-6xl lg:text-[6.5rem] tracking-tighter text-zinc-100">VARSHNEY</span>
-            </h1>
-          </div>
+        {/* 2. DYNAMIC BADAL VARSHNEY 3D CENTER-ZOOM CONTAINER */}
+        <div
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center max-w-7xl mx-auto px-4 pointer-events-none transition-all duration-75 ease-out"
+          style={{
+            opacity: heroOpacity,
+            filter: `blur(${heroBlur}px)`,
+            display: heroOpacity > 0.005 ? 'flex' : 'none'
+          }}
+        >
+          <h1
+            ref={titleRef}
+            className="font-display font-extrabold tracking-tight uppercase leading-none select-none drop-shadow-[0_15px_45px_rgba(255,255,255,0.45)] text-white flex flex-col items-center justify-center gap-1 sm:gap-2"
+          >
+            {/* BADAL WORD (Center Zoom + Letter Separation) */}
+            <div className="flex items-center justify-center text-4xl sm:text-7xl md:text-9xl lg:text-[9.5rem] tracking-tighter drop-shadow-[0_0_35px_rgba(255,255,255,0.5)]">
+              {badalLetters.map((char, index) => {
+                const vec = badalVectors[index];
 
+                // During Flythrough: letters zoom & spread outward from center
+                const lx = vec.x * flythroughProgress;
+                const ly = vec.y * flythroughProgress;
+                const lr = vec.r * flythroughProgress;
+                const ls = emergenceScale * (1 + (vec.scale - 1) * flythroughProgress);
+
+                return (
+                  <span
+                    key={index}
+                    className="inline-block transition-transform duration-75 ease-out"
+                    style={{
+                      transform: `translate(${lx}vw, ${ly}vh) rotate(${lr}deg) scale(${ls})`,
+                      transformOrigin: 'center center'
+                    }}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+            </div>
+
+            {/* VARSHNEY WORD (Center Zoom + Letter Separation) */}
+            <div className="flex items-center justify-center text-2xl sm:text-5xl md:text-7xl lg:text-[7.5rem] tracking-tighter text-zinc-100 drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]">
+              {varshneyLetters.map((char, index) => {
+                const vec = varshneyVectors[index];
+
+                // During Flythrough: letters zoom & spread outward from center
+                const lx = vec.x * flythroughProgress;
+                const ly = vec.y * flythroughProgress;
+                const lr = vec.r * flythroughProgress;
+                const ls = emergenceScale * (1 + (vec.scale - 1) * flythroughProgress);
+
+                return (
+                  <span
+                    key={index}
+                    className="inline-block transition-transform duration-75 ease-out"
+                    style={{
+                      transform: `translate(${lx}vw, ${ly}vh) rotate(${lr}deg) scale(${ls})`,
+                      transformOrigin: 'center center'
+                    }}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+            </div>
+          </h1>
+
+          {/* Subtitle */}
           <p
-            className="font-display text-xs sm:text-lg md:text-2xl font-light text-zinc-200 tracking-wide max-w-3xl mx-auto mt-3 sm:mt-4 leading-relaxed"
-            style={{ 
-              opacity: heroOpacity,
-              filter: `blur(${heroBlur * 0.5}px)`,
-              transform: `translateY(${heroY * 0.5}px)`
+            className="font-display text-sm sm:text-xl md:text-2xl font-light text-zinc-200 tracking-wide max-w-3xl mx-auto mt-4 sm:mt-6 leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] transition-all duration-75"
+            style={{
+              opacity: subContentOpacity,
+              transform: `scale(${1 + flythroughProgress * 0.4})`,
+              filter: `blur(${flythroughProgress * 4}px)`,
+              pointerEvents: subContentOpacity > 0.4 ? 'auto' : 'none'
             }}
           >
             Creative Web Developer & Visual Front-End Engineer
@@ -132,15 +219,16 @@ export default function Hero({ scrollProgress }) {
 
           {/* Action CTA Buttons */}
           <div
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-6 sm:mt-8 w-full max-w-xs sm:max-w-none mx-auto"
-            style={{ 
-              opacity: heroOpacity,
-              pointerEvents: heroOpacity > 0.5 ? 'auto' : 'none'
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mt-8 sm:mt-10 w-full max-w-xs sm:max-w-none mx-auto transition-all duration-75"
+            style={{
+              opacity: subContentOpacity,
+              transform: `scale(${1 + flythroughProgress * 0.3})`,
+              pointerEvents: subContentOpacity > 0.5 ? 'auto' : 'none'
             }}
           >
             <a
               href="#projects"
-              className="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 rounded-full bg-white text-black font-bold text-xs sm:text-sm uppercase tracking-widest hover:bg-zinc-200 transition-all hover:scale-105 shadow-xl shadow-white/20 text-center"
+              className="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 rounded-full bg-white text-black font-bold text-xs sm:text-sm uppercase tracking-widest hover:bg-zinc-200 transition-all hover:scale-105 shadow-2xl shadow-white/30 text-center"
             >
               Explore My Work
             </a>
@@ -156,14 +244,14 @@ export default function Hero({ scrollProgress }) {
         {/* Initial Welcome Scroll Prompt */}
         <div
           className="flex flex-col items-center gap-2 sm:gap-3 text-zinc-200 text-[10px] sm:text-xs font-mono uppercase tracking-widest transition-all duration-300 z-30 mb-2 sm:mb-0"
-          style={{ 
+          style={{
             opacity: scrollPromptOpacity,
             pointerEvents: scrollPromptOpacity > 0.2 ? 'auto' : 'none'
           }}
         >
           <span className="bg-black/60 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full border border-white/20 backdrop-blur-md shadow-2xl text-white font-semibold flex items-center gap-2 text-[10px] sm:text-xs">
-            <span>Scroll down to enter</span>
-            <span className="text-sm sm:text-base animate-bounce">☁️</span>
+            <span>Scroll down to enter the clouds</span>
+            {/* <span className="text-sm sm:text-base animate-bounce">☁️</span> */}
           </span>
           <div className="w-5 h-8 sm:w-6 sm:h-10 rounded-full border-2 border-white/40 p-1 flex justify-center bg-black/30 backdrop-blur-sm">
             <div className="w-1.5 h-2.5 sm:h-3 bg-white rounded-full animate-bounce"></div>
@@ -174,3 +262,4 @@ export default function Hero({ scrollProgress }) {
     </section>
   );
 }
+

@@ -64,9 +64,9 @@ export default function Projects() {
 
   return (
     <section id="projects" className="relative py-32 px-6 md:px-12 section-dimming-2 z-20 overflow-hidden section-divider">
-      
+
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
@@ -85,11 +85,10 @@ export default function Projects() {
               <button
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
-                className={`px-4 py-2 rounded-full text-xs font-mono tracking-wider transition-all border ${
-                  activeFilter === filter
+                className={`px-4 py-2 rounded-full text-xs font-mono tracking-wider transition-all border ${activeFilter === filter
                     ? 'bg-white text-black border-white font-bold'
                     : 'bg-zinc-900/80 text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
-                }`}
+                  }`}
               >
                 {filter}
               </button>
@@ -112,7 +111,7 @@ export default function Projects() {
                   className="w-full h-full object-cover grayscale contrast-125 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700 opacity-80 group-hover:opacity-100"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
-                
+
                 {/* Metrics Pill */}
                 <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-[11px] font-mono text-zinc-300">
                   {project.metrics}
@@ -199,7 +198,7 @@ export default function Projects() {
 
             <div className="text-xs font-mono text-zinc-400 mb-2 uppercase">{activeModalProject.category}</div>
             <h3 className="font-display text-3xl font-bold text-white mb-4">{activeModalProject.title}</h3>
-            
+
             <img
               src={activeModalProject.image}
               alt={activeModalProject.title}

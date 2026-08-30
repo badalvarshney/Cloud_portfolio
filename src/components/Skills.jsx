@@ -1,38 +1,67 @@
 import React from 'react';
-import { Cpu, Code2, Database, Wrench, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Cpu, Code2, Layers, Palette, Smartphone, Wrench, Bot, Monitor, CheckCircle2, Sparkles } from 'lucide-react';
 
-const SKILL_CATEGORIES = [
+const TECH_CATEGORIES = [
   {
-    title: 'Frontend Architecture',
+    category: 'Programming Languages',
     icon: Code2,
+    badge: '🚀 Core',
+    skills: ['JavaScript', 'TypeScript', 'HTML5', 'CSS3']
+  },
+  {
+    category: 'Frontend Development',
+    icon: Layers,
+    badge: '🎨 Architecture',
+    skills: ['React', 'Next.js', 'Redux', 'Redux Toolkit']
+  },
+  {
+    category: 'UI Libraries & Tools',
+    icon: Palette,
+    badge: '🧩 Design Systems',
     skills: [
-      { name: 'React 18', level: '95%', desc: 'Hooks, Context, Custom Hooks, Performance' },
-      { name: 'Next.js 14', level: '90%', desc: 'App Router, Server Components, SSR/SSG' },
-      { name: 'GSAP 3', level: '92%', desc: 'ScrollTrigger, MotionPath, Timeline, Canvas' },
-      { name: 'JavaScript (ES6+)', level: '95%', desc: 'Async/Await, Closures, DOM Architecture' },
-      { name: 'Three.js / WebGL', level: '85%', desc: '3D Scenes, Volumetric Particle Systems' },
-      { name: 'Tailwind CSS', level: '98%', desc: 'Custom Tokens, Dark Mode, Utility Design' }
+      'TailwindCSS',
+      'Bootstrap',
+      'Material UI',
+      'Ant Design',
+      'Mantine',
+      'Radix UI',
+      'DaisyUI',
+      'Aceternity UI'
     ]
   },
   {
-    title: 'Backend & APIs',
-    icon: Database,
-    skills: [
-      { name: 'Node.js', level: '88%', desc: 'Event Loop, Streams, NPM Package Ecosystem' },
-      { name: 'Express.js', level: '90%', desc: 'Middleware, REST Architecture, Auth' },
-      { name: 'MongoDB / Mongoose', level: '85%', desc: 'Document Modeling, Aggregations' },
-      { name: 'REST APIs & WebSockets', level: '92%', desc: 'JSON Endpoints, Real-Time Sockets' }
-    ]
+    category: 'Other Frontend Skills',
+    icon: Smartphone,
+    badge: '📱 UX & Performance',
+    skills: ['Responsive Design', 'Web Animations', 'UI/UX']
   },
   {
-    title: 'Development Tools',
+    category: 'Tools & Workflow',
     icon: Wrench,
+    badge: '⚙️ Environment',
     skills: [
-      { name: 'Git & GitHub', level: '94%', desc: 'Branching, PR Workflows, CI/CD Actions' },
-      { name: 'Vite & Webpack', level: '90%', desc: 'Hot Reloading, Build Bundling' },
-      { name: 'Vercel / Netlify', level: '95%', desc: 'Production Deployment & DNS' },
-      { name: 'Postman & DevTools', level: '92%', desc: 'API Testing, DOM/Network Debugging' }
+      'Git',
+      'GitHub',
+      'VS Code',
+      'Figma',
+      'Postman',
+      'Vercel',
+      'NPM',
+      'Notion',
+      'Google Antigravity'
     ]
+  },
+  {
+    category: 'AI Tools',
+    icon: Bot,
+    badge: '🤖 Productivity',
+    skills: ['ChatGPT', 'Google Gemini', 'GitHub Copilot', 'Claude', 'Perplexity']
+  },
+  {
+    category: 'Operating Systems',
+    icon: Monitor,
+    badge: '💻 Platforms',
+    skills: ['Windows', 'macOS', 'Ubuntu']
   }
 ];
 
@@ -40,75 +69,70 @@ export default function Skills() {
   return (
     <section id="skills" className="relative py-32 px-6 md:px-12 section-dimming-3 z-20 overflow-hidden section-divider">
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Section Title */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
             <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-zinc-400 mb-3 bg-zinc-900 border border-white/10 px-3 py-1 rounded-full">
               <Cpu className="w-3.5 h-3.5 text-white" />
-              <span>03 // Skills & Stack</span>
+              <span>03 // Skills & Tech Stack</span>
             </div>
             <h2 className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-white uppercase">
-              Tech Stack & <span className="text-zinc-500">Toolkit</span>
+              Comprehensive <span className="text-zinc-500">Tech Stack</span>
             </h2>
           </div>
 
           <p className="text-zinc-400 text-sm max-w-md leading-relaxed font-light">
-            Empowered with modern frameworks and animation engines to engineer high-speed, robust web applications.
+            Badal's complete technical arsenal: languages, frontend frameworks, UI design libraries, workflow tools, and AI technologies.
           </p>
         </div>
 
-        {/* Skill Category Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {SKILL_CATEGORIES.map((cat, idx) => {
-            const Icon = cat.icon;
+        {/* Tech Stack Category Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {TECH_CATEGORIES.map((item, idx) => {
+            const Icon = item.icon;
             return (
               <div
-                key={cat.title}
-                className="glass-panel p-8 rounded-3xl border border-white/15 glass-panel-hover flex flex-col justify-between"
+                key={item.category}
+                className="glass-panel p-8 rounded-3xl border border-white/15 glass-panel-hover flex flex-col justify-between group relative overflow-hidden"
               >
+                {/* Background Subtle Glow */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all pointer-events-none"></div>
+
                 <div>
-                  <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
-                    <div className="p-3 rounded-2xl bg-zinc-900 border border-white/15 text-white">
-                      <Icon className="w-6 h-6" />
+                  {/* Category Header */}
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 rounded-2xl bg-zinc-900 border border-white/15 text-white group-hover:bg-white group-hover:text-black transition-all">
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-display text-lg font-bold text-white">{item.category}</h3>
+                        <span className="text-[10px] font-mono text-zinc-500">0{idx + 1} // Stack Category</span>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-display text-xl font-bold text-white">{cat.title}</h3>
-                      <span className="text-[11px] font-mono text-zinc-500">0{idx + 1} // Proficiency Matrix</span>
-                    </div>
+                    <span className="text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-white/10 px-2.5 py-1 rounded-full shrink-0">
+                      {item.badge}
+                    </span>
                   </div>
 
-                  <div className="space-y-5">
-                    {cat.skills.map((skill) => (
-                      <div key={skill.name} className="group">
-                        <div className="flex items-center justify-between text-sm mb-1.5">
-                          <span className="font-semibold text-zinc-200 group-hover:text-white transition-colors flex items-center gap-2">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white transition-colors" />
-                            {skill.name}
-                          </span>
-                          <span className="font-mono text-xs text-zinc-500 group-hover:text-zinc-300">
-                            {skill.level}
-                          </span>
-                        </div>
-
-                        {/* Progress Bar */}
-                        <div className="w-full h-1.5 rounded-full bg-zinc-900 overflow-hidden mb-1">
-                          <div
-                            className="h-full bg-gradient-to-r from-zinc-500 to-white rounded-full transition-all duration-1000 ease-out group-hover:from-white group-hover:to-white"
-                            style={{ width: skill.level }}
-                          ></div>
-                        </div>
-
-                        <span className="text-[11px] text-zinc-500 block font-light">
-                          {skill.desc}
-                        </span>
+                  {/* Skills Pill Badges */}
+                  <div className="flex flex-wrap gap-2.5">
+                    {item.skills.map((skill) => (
+                      <div
+                        key={skill}
+                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-900/90 border border-white/10 text-xs font-mono text-zinc-200 group-hover:border-white/30 hover:bg-white hover:text-black transition-all cursor-default"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                        <span>{skill}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="mt-8 pt-4 border-t border-white/10 text-center text-xs font-mono text-zinc-500">
-                  <span>Continuous Learning & Optimization</span>
+                <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-zinc-500">
+                  <span>{item.skills.length} Technologies</span>
+                  <span className="text-zinc-400 font-semibold">Production Ready</span>
                 </div>
               </div>
             );

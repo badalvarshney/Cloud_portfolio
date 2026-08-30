@@ -1,15 +1,40 @@
 import React from 'react';
 import { Cloud, Zap, ShieldCheck, Terminal, Compass, Eye, Sparkles } from 'lucide-react';
 
-export default function About() {
+export default function About({ scrollProgress = 1 }) {
+  // Reveal About section smoothly after BADAL VARSHNEY name shatter flythrough completes (progress >= 0.78)
+  let aboutOpacity = 1;
+  let aboutTranslateY = 0;
+
+  if (scrollProgress < 0.78) {
+    aboutOpacity = 0;
+    aboutTranslateY = 50;
+  } else if (scrollProgress >= 0.78 && scrollProgress <= 0.92) {
+    const p = (scrollProgress - 0.78) / 0.14;
+    const smoothP = 0.5 - 0.5 * Math.cos(p * Math.PI);
+    aboutOpacity = smoothP;
+    aboutTranslateY = 50 * (1 - smoothP);
+  } else {
+    aboutOpacity = 1;
+    aboutTranslateY = 0;
+  }
+
   return (
-    <section id="about" className="relative py-32 px-6 md:px-12 section-dimming-1 z-20 overflow-hidden section-divider">
+    <section
+      id="about"
+      className="relative py-32 px-6 md:px-12 section-dimming-1 z-20 overflow-hidden section-divider transition-all duration-150 ease-out"
+      style={{
+        opacity: aboutOpacity,
+        transform: `translateY(${aboutTranslateY}px)`,
+        pointerEvents: aboutOpacity > 0.3 ? 'auto' : 'none'
+      }}
+    >
       {/* Background Subtle Grid & Light Glow */}
       <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none"></div>
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-white/5 rounded-full blur-[140px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        
+
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
@@ -24,27 +49,27 @@ export default function About() {
           </div>
 
           <p className="text-zinc-400 text-base max-w-md leading-relaxed font-light">
-            Like clouds taking infinite creative forms, I sculpt raw web technologies into seamless, fast, and visually striking digital experiences.
+            Like clouds taking infinite creative forms, Badal Varshney transforms complex web technologies into seamless, ultra-fast, and visually striking digital experiences.
           </p>
         </div>
 
-        {/* Feature Grid */}
+        {/* Badal Varshney 3 Core Expertise Pillars */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          
+
           {/* Card 1 */}
           <div className="glass-panel p-8 rounded-3xl glass-panel-hover group relative overflow-hidden">
             <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/15 flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-all">
               <Zap className="w-6 h-6" />
             </div>
             <h3 className="font-display text-2xl font-bold text-white mb-3">
-              Lightning Fast Performance
+              Lightning Fast Speed
             </h3>
             <p className="text-zinc-400 text-sm leading-relaxed">
-              Prioritizing minimal bundle sizes, optimized DOM rendering, lazy asset loading, and smooth 60+ FPS animation frame rates.
+              Badal builds web apps prioritizing minimal bundle sizes, optimized DOM rendering, lazy loading, and smooth 60+ FPS frame rates.
             </p>
             <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-500">
-              <span>Lighthouse Score</span>
-              <span className="text-white font-bold">100 / 100</span>
+              <span>Performance Goal</span>
+              <span className="text-white font-bold">100 / 100 Speed</span>
             </div>
           </div>
 
@@ -54,14 +79,14 @@ export default function About() {
               <Sparkles className="w-6 h-6" />
             </div>
             <h3 className="font-display text-2xl font-bold text-white mb-3">
-              GSAP & Motion Dynamics
+              3D WebGL & Motion Art
             </h3>
             <p className="text-zinc-400 text-sm leading-relaxed">
-              Crafting immersive scroll triggers, volumetric fly-throughs, magnetic micro-interactions, and cinematic motion graphics.
+              Specialized in crafting immersive 3D cloud portals, Three.js canvas engines, GSAP scroll triggers, and fluid micro-interactions.
             </p>
             <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-500">
-              <span>Animation Engine</span>
-              <span className="text-white font-bold">GSAP 3 + Motion</span>
+              <span>Visual Superpower</span>
+              <span className="text-white font-bold">Three.js + GSAP 3</span>
             </div>
           </div>
 
@@ -71,13 +96,13 @@ export default function About() {
               <ShieldCheck className="w-6 h-6" />
             </div>
             <h3 className="font-display text-2xl font-bold text-white mb-3">
-              Clean Architecture
+              Clean React Architecture
             </h3>
             <p className="text-zinc-400 text-sm leading-relaxed">
-              Structuring robust React/Next.js codebases with reusable modular component libraries, clear state management, and scalability.
+              Structuring robust React 18 & Next.js platforms with clean modular component libraries, clear state management, and scalability.
             </p>
             <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-500">
-              <span>Code Standard</span>
+              <span>Development Standard</span>
               <span className="text-white font-bold">Production Ready</span>
             </div>
           </div>
@@ -87,33 +112,37 @@ export default function About() {
         {/* Interactive Code Window / Developer Bio */}
         <div className="glass-panel p-8 md:p-12 rounded-3xl border border-white/15 relative overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            
+
             <div className="space-y-6">
               <div className="flex items-center gap-3">
                 <Terminal className="w-5 h-5 text-white" />
                 <span className="text-xs font-mono uppercase tracking-widest text-zinc-400">developer.config.json</span>
               </div>
-              
+
               <h3 className="font-display text-3xl font-bold text-white leading-tight">
-                "Code is art that executes."
+                Hi, I'm <span className="text-zinc-300">Badal</span> 👋
               </h3>
-              
-              <p className="text-zinc-300 text-sm md:text-base leading-relaxed">
-                As a web developer named <strong className="text-white font-semibold">Badal Varshney</strong> (Hindi for Cloud), I embrace fluid flexibility in code. My goal is to build web applications that leave a lasting visual impact while maintaining enterprise-grade reliability and speed.
+
+              <p className="text-zinc-200 text-sm md:text-base leading-relaxed font-light">
+                Hi, I’m <strong className="text-white font-semibold">Badal</strong>, a <strong className="text-white font-semibold">Frontend Developer</strong> specializing in building modern, responsive web applications. I have a strong focus on creating clean, scalable UI designs and delivering consistent user experiences.
+              </p>
+
+              <p className="text-zinc-300 text-sm md:text-base leading-relaxed font-light">
+                I’m passionate about writing efficient code and continuously improving the usability and performance of web interfaces.
               </p>
 
               <div className="flex flex-wrap gap-3 pt-2">
                 <span className="px-3.5 py-1.5 rounded-full bg-zinc-900 border border-white/10 text-xs font-mono text-zinc-300">
-                  ⚡ React 18 & Next.js
+                  ⚡ React & Next.js
                 </span>
                 <span className="px-3.5 py-1.5 rounded-full bg-zinc-900 border border-white/10 text-xs font-mono text-zinc-300">
-                  ☁️ 3D Three.js / WebGL
+                  🎨 Responsive UI/UX
                 </span>
                 <span className="px-3.5 py-1.5 rounded-full bg-zinc-900 border border-white/10 text-xs font-mono text-zinc-300">
-                  🎬 GSAP ScrollTrigger
+                  🚀 High Performance
                 </span>
                 <span className="px-3.5 py-1.5 rounded-full bg-zinc-900 border border-white/10 text-xs font-mono text-zinc-300">
-                  🎨 Tailwind CSS
+                  💻 Clean Scalable Code
                 </span>
               </div>
             </div>
@@ -124,20 +153,20 @@ export default function About() {
                 <div className="w-3 h-3 rounded-full bg-zinc-700"></div>
                 <div className="w-3 h-3 rounded-full bg-zinc-700"></div>
                 <div className="w-3 h-3 rounded-full bg-zinc-700"></div>
-                <span className="ml-auto text-[10px] text-zinc-500">BadalVarshneyDeveloper.js</span>
+                <span className="ml-auto text-[10px] text-zinc-500">BadalFrontendDeveloper.js</span>
               </div>
 
               <pre className="space-y-1.5 text-zinc-400 overflow-x-auto leading-relaxed">
                 <div><span className="text-zinc-600">// Developer Profile Matrix</span></div>
                 <div><span className="text-white font-bold">const</span> developer = &#123;</div>
-                <div className="pl-4">name: <span className="text-white">"Badal Varshney"</span>,</div>
-                <div className="pl-4">role: <span className="text-white">"Creative Web Developer"</span>,</div>
-                <div className="pl-4">superpower: <span className="text-white">"Transforming ideas into cloud-fast web apps"</span>,</div>
-                <div className="pl-4">coreTech: [<span className="text-white">"React"</span>, <span className="text-white font-semibold">"Next.js"</span>, <span className="text-white font-semibold">"GSAP"</span>, <span className="text-white">"Three.js"</span>],</div>
-                <div className="pl-4">status: <span className="text-emerald-400">"Ready for high-impact projects"</span></div>
+                <div className="pl-4">name: <span className="text-white">"Badal"</span>,</div>
+                <div className="pl-4">role: <span className="text-white">"Frontend Developer"</span>,</div>
+                <div className="pl-4">focus: <span className="text-white">"Clean, scalable UI & modern web apps"</span>,</div>
+                <div className="pl-4">passion: <span className="text-white font-semibold">"Efficient code & high usability"</span>,</div>
+                <div className="pl-4">status: <span className="text-emerald-400">"Ready for new web opportunities"</span></div>
                 <div>&#125;;</div>
-                <div className="pt-2"><span className="text-white font-bold">function</span> buildFutureWeb() &#123;</div>
-                <div className="pl-4"><span className="text-zinc-500">return</span> developer.coreTech.map(tech =&gt; createMasterpiece(tech));</div>
+                <div className="pt-2"><span className="text-white font-bold">function</span> buildResponsiveWeb() &#123;</div>
+                <div className="pl-4"><span className="text-zinc-500">return</span> developer.focus + <span className="text-white">" + "</span> + developer.passion;</div>
                 <div>&#125;</div>
               </pre>
             </div>

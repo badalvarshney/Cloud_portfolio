@@ -7,8 +7,10 @@ export default function Navbar({ scrollProgress = 0 }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Scrolled sticky bar activates only after passing hero section (scrollY > 700)
-      if (window.scrollY > 700) {
+      const heroElement = document.getElementById('cloud-hero-trigger');
+      const heroHeight = heroElement ? heroElement.offsetHeight : 2000;
+      // Scrolled sticky bar activates only after arriving at main content section (scrollY > 75% of hero height)
+      if (window.scrollY > heroHeight * 0.75) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -30,10 +32,10 @@ export default function Navbar({ scrollProgress = 0 }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Header opacity: 0 on initial cloud view, fades in smoothly as clouds clear (scrollProgress > 0.35)
-  const isVisible = scrollProgress > 0.35 || scrolled;
+  // Header opacity: Hidden during Hero cloud flythrough (scrollProgress < 0.78), fades in when About section arrives
+  const isVisible = scrollProgress >= 0.78 || scrolled;
   const navOpacity = isVisible 
-    ? (scrolled ? 1 : Math.min(1, (scrollProgress - 0.35) / 0.20)) 
+    ? (scrolled ? 1 : Math.min(1, Math.max(0, (scrollProgress - 0.78) / 0.18))) 
     : 0;
 
   return (

@@ -31,7 +31,7 @@ export default function App() {
       {/* Main Content Sections */}
       <main className="relative z-20">
         <Hero scrollProgress={scrollProgress} />
-        <About />
+        <About scrollProgress={scrollProgress} />
         <Projects />
         <Skills />
         <Experience />

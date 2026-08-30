@@ -7,6 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function CloudCanvas({ onScrollProgress }) {
   const mountRef = useRef(null);
+  const flashOverlayRef = useRef(null);
 
   useEffect(() => {
     const container = mountRef.current;
@@ -41,15 +42,15 @@ export default function CloudCanvas({ onScrollProgress }) {
 
       // Dark bottom shadow base for 3D depth
       const shadows = [
-        { x: 256, y: 310, r: 170, col: 'rgba(40, 50, 70, 0.7)' },
-        { x: 170, y: 330, r: 135, col: 'rgba(35, 45, 65, 0.6)' },
-        { x: 345, y: 330, r: 135, col: 'rgba(35, 45, 65, 0.6)' }
+        { x: 256, y: 310, r: 170, col: 'rgba(30, 40, 60, 0.75)' },
+        { x: 170, y: 330, r: 135, col: 'rgba(25, 35, 55, 0.65)' },
+        { x: 345, y: 330, r: 135, col: 'rgba(25, 35, 55, 0.65)' }
       ];
 
       shadows.forEach(p => {
         const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
         grad.addColorStop(0, p.col);
-        grad.addColorStop(0.7, 'rgba(25, 35, 55, 0.25)');
+        grad.addColorStop(0.7, 'rgba(20, 30, 50, 0.3)');
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -126,7 +127,7 @@ export default function CloudCanvas({ onScrollProgress }) {
     const cloudGroup = new THREE.Group();
     const cloudParticles = [];
 
-    // LAYER 1: Dense Full-Screen Cover Cloud Deck (Z: +900 to -3600)
+    // LAYER 1: Dense Cover Clouds
     const coverCloudCount = 110;
     for (let f = 0; f < coverCloudCount; f++) {
       const mat = cloudMaterials[f % cloudMaterials.length];
@@ -134,7 +135,7 @@ export default function CloudCanvas({ onScrollProgress }) {
 
       const x = (Math.random() - 0.5) * 2600;
       const y = (Math.random() - 0.5) * 1600;
-      const z = 900 - Math.random() * 3800; // Deep Z distribution from +900 down to -2900
+      const z = 900 - Math.random() * 3800;
 
       sprite.position.set(x, y, z);
       const scale = 750 + Math.random() * 850;
@@ -152,7 +153,7 @@ export default function CloudCanvas({ onScrollProgress }) {
       cloudParticles.push(sprite);
     }
 
-    // LAYER 2: Upward & Background Canopy Clouds
+    // LAYER 2: Background Canopy Clouds
     const canopyCloudCount = 50;
     for (let c = 0; c < canopyCloudCount; c++) {
       const mat = cloudMaterials[c % cloudMaterials.length];
@@ -192,6 +193,288 @@ export default function CloudCanvas({ onScrollProgress }) {
     shadowLight.position.set(-300, -500, -300);
     scene.add(shadowLight);
 
+    // ----------------------------------------------------
+    // REALISTIC VOLUMETRIC 3D RAIN ENGINE (1,800 Tangible Raindrops)
+    // ----------------------------------------------------
+    const rainCount = 1800;
+    const rainPositions = new Float32Array(rainCount * 6);
+    const rainColors = new Float32Array(rainCount * 6);
+    const rainData = [];
+
+    for (let i = 0; i < rainCount; i++) {
+      const x = (Math.random() - 0.5) * 3400;
+      const y = (Math.random() - 0.5) * 2400 + 400;
+      const z = (Math.random() - 0.5) * 2400 + 200;
+
+      const length = 50 + Math.random() * 75;
+      const speedY = 32 + Math.random() * 28;
+      const speedX = -5.0 - Math.random() * 4.0; // Wind slant angle (~15°)
+
+      let col = new THREE.Color(0xa5f3fc);
+      if (z > 350) {
+        col.setHex(0xffffff); // Foreground glass drop highlight
+      } else if (z > -200) {
+        col.setHex(0x93c5fd); // Midground rain streak
+      } else {
+        col.setHex(0x38bdf8); // Background rain drizzle
+      }
+
+      rainPositions[i * 6 + 0] = x;
+      rainPositions[i * 6 + 1] = y;
+      rainPositions[i * 6 + 2] = z;
+
+      rainPositions[i * 6 + 3] = x + speedX * 1.8;
+      rainPositions[i * 6 + 4] = y - length;
+      rainPositions[i * 6 + 5] = z;
+
+      rainColors[i * 6 + 0] = col.r;
+      rainColors[i * 6 + 1] = col.g;
+      rainColors[i * 6 + 2] = col.b;
+      rainColors[i * 6 + 3] = col.r;
+      rainColors[i * 6 + 4] = col.g;
+      rainColors[i * 6 + 5] = col.b;
+
+      rainData.push({
+        x, y, z, length, speedY, speedX,
+        initialY: y,
+        baseColor: col
+      });
+    }
+
+    const rainGeometry = new THREE.BufferGeometry();
+    rainGeometry.setAttribute('position', new THREE.BufferAttribute(rainPositions, 3));
+    rainGeometry.setAttribute('color', new THREE.BufferAttribute(rainColors, 3));
+
+    const rainMaterial = new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+
+    const rainLines = new THREE.LineSegments(rainGeometry, rainMaterial);
+    scene.add(rainLines);
+
+    // ----------------------------------------------------
+    // SUPERCHARGED HIGH-POWER LIGHTNING (BIJLI) ENGINE
+    // ----------------------------------------------------
+    const lightningLight = new THREE.PointLight(0xe0f2fe, 0, 6000);
+    lightningLight.position.set(0, 1000, 300);
+    scene.add(lightningLight);
+
+    const lightningFlashLight = new THREE.DirectionalLight(0xf0f9ff, 0);
+    lightningFlashLight.position.set(0, 1200, 600);
+    scene.add(lightningFlashLight);
+
+    // Dual Lightning Bolt Geometry (White Core + Glowing Electric Cyan Shell)
+    const maxBoltSegments = 72;
+    const boltCorePositions = new Float32Array(maxBoltSegments * 6);
+    const boltGlowPositions = new Float32Array(maxBoltSegments * 6);
+
+    const boltCoreGeo = new THREE.BufferGeometry();
+    boltCoreGeo.setAttribute('position', new THREE.BufferAttribute(boltCorePositions, 3));
+
+    const boltGlowGeo = new THREE.BufferGeometry();
+    boltGlowGeo.setAttribute('position', new THREE.BufferAttribute(boltGlowPositions, 3));
+
+    // Pure White Inner Thunderbolt Core
+    const boltCoreMat = new THREE.LineBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const boltCoreLine = new THREE.LineSegments(boltCoreGeo, boltCoreMat);
+    scene.add(boltCoreLine);
+
+    // Cyan Outer Electric Aura Shell
+    const boltGlowMat = new THREE.LineBasicMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    const boltGlowLine = new THREE.LineSegments(boltGlowGeo, boltGlowMat);
+    scene.add(boltGlowLine);
+
+    let isFlashing = false;
+    let flashIntensity = 0;
+    let stormModeActive = false;
+
+    // Generate heavy multi-branched electric lightning path right in front of camera
+    const generateLightningPath = () => {
+      const startX = (Math.random() - 0.5) * 1000;
+      const startY = camera.position.y + 600;
+      const startZ = camera.position.z - 250;
+
+      let curX = startX;
+      let curY = startY;
+      let curZ = startZ;
+
+      const coreArray = boltCoreGeo.attributes.position.array;
+      const glowArray = boltGlowGeo.attributes.position.array;
+
+      const segCount = 24;
+      const stepY = 1300 / segCount;
+
+      for (let i = 0; i < segCount; i++) {
+        const nextX = curX + (Math.random() - 0.5) * 240;
+        const nextY = curY - stepY;
+        const nextZ = curZ + (Math.random() - 0.5) * 140;
+
+        // Core Trunk (Thick 3D jittered stroke bundle)
+        const coreIdx = (i * 3) * 6;
+        coreArray[coreIdx + 0] = curX;
+        coreArray[coreIdx + 1] = curY;
+        coreArray[coreIdx + 2] = curZ;
+        coreArray[coreIdx + 3] = nextX;
+        coreArray[coreIdx + 4] = nextY;
+        coreArray[coreIdx + 5] = nextZ;
+
+        coreArray[coreIdx + 6] = curX + (Math.random() - 0.5) * 8;
+        coreArray[coreIdx + 7] = curY;
+        coreArray[coreIdx + 8] = curZ + (Math.random() - 0.5) * 8;
+        coreArray[coreIdx + 9] = nextX + (Math.random() - 0.5) * 8;
+        coreArray[coreIdx + 10] = nextY;
+        coreArray[coreIdx + 11] = nextZ + (Math.random() - 0.5) * 8;
+
+        // Glow Shell (Expanded 3D aura stroke bundle)
+        const glowIdx = (i * 3) * 6;
+        glowArray[glowIdx + 0] = curX + (Math.random() - 0.5) * 20;
+        glowArray[glowIdx + 1] = curY;
+        glowArray[glowIdx + 2] = curZ + (Math.random() - 0.5) * 20;
+        glowArray[glowIdx + 3] = nextX + (Math.random() - 0.5) * 20;
+        glowArray[glowIdx + 4] = nextY;
+        glowArray[glowIdx + 5] = nextZ + (Math.random() - 0.5) * 20;
+
+        glowArray[glowIdx + 6] = curX + (Math.random() - 0.5) * 35;
+        glowArray[glowIdx + 7] = curY;
+        glowArray[glowIdx + 8] = curZ + (Math.random() - 0.5) * 35;
+        glowArray[glowIdx + 9] = nextX + (Math.random() - 0.5) * 35;
+        glowArray[glowIdx + 10] = nextY;
+        glowArray[glowIdx + 11] = nextZ + (Math.random() - 0.5) * 35;
+
+        // Branching Thunderbolt Forks
+        if (i > 3 && i < 20 && Math.random() > 0.3) {
+          const branchX = nextX + (Math.random() - 0.5) * 320;
+          const branchY = nextY - stepY * 0.8;
+          const branchZ = nextZ + (Math.random() - 0.5) * 180;
+
+          coreArray[coreIdx + 12] = nextX;
+          coreArray[coreIdx + 13] = nextY;
+          coreArray[coreIdx + 14] = nextZ;
+          coreArray[coreIdx + 15] = branchX;
+          coreArray[coreIdx + 16] = branchY;
+          coreArray[coreIdx + 17] = branchZ;
+
+          glowArray[glowIdx + 12] = nextX;
+          glowArray[glowIdx + 13] = nextY;
+          glowArray[glowIdx + 14] = nextZ;
+          glowArray[glowIdx + 15] = branchX + 20;
+          glowArray[glowIdx + 16] = branchY;
+          glowArray[glowIdx + 17] = branchZ + 20;
+        } else {
+          coreArray[coreIdx + 12] = nextX;
+          coreArray[coreIdx + 13] = nextY;
+          coreArray[coreIdx + 14] = nextZ;
+          coreArray[coreIdx + 15] = nextX;
+          coreArray[coreIdx + 16] = nextY;
+          coreArray[coreIdx + 17] = nextZ;
+
+          glowArray[glowIdx + 12] = nextX;
+          glowArray[glowIdx + 13] = nextY;
+          glowArray[glowIdx + 14] = nextZ;
+          glowArray[glowIdx + 15] = nextX;
+          glowArray[glowIdx + 16] = nextY;
+          glowArray[glowIdx + 17] = nextZ;
+        }
+
+        curX = nextX;
+        curY = nextY;
+        curZ = nextZ;
+      }
+
+      boltCoreGeo.attributes.position.needsUpdate = true;
+      boltGlowGeo.attributes.position.needsUpdate = true;
+      lightningLight.position.set(startX, camera.position.y + 300, startZ);
+      lightningFlashLight.position.set(0, camera.position.y + 400, camera.position.z);
+    };
+
+    // HIGH-POWER TRIPLE-BURST LIGHTNING STRIKE SEQUENCE
+    const triggerLightningStrike = () => {
+      if (!stormModeActive) return;
+      generateLightningPath();
+      isFlashing = true;
+
+      // Dispatch event to render sharp electric lightning bolt lines on overlay
+      window.dispatchEvent(new CustomEvent('trigger-lightning-strike'));
+
+      // Trigger Screen Flash Overlay
+      if (flashOverlayRef.current) {
+        flashOverlayRef.current.style.opacity = '0.55';
+        setTimeout(() => {
+          if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0.15';
+        }, 50);
+      }
+
+      // Strike 1 (Sudden Massive Shockwave: 40 Power)
+      flashIntensity = 40.0;
+      boltCoreMat.opacity = 1.0;
+      boltGlowMat.opacity = 0.9;
+
+      setTimeout(() => {
+        flashIntensity = 8.0;
+        boltCoreMat.opacity = 0.3;
+        boltGlowMat.opacity = 0.3;
+
+        // Strike 2 (Secondary Pre-Shock Burst: 25 Power)
+        setTimeout(() => {
+          generateLightningPath();
+          flashIntensity = 25.0;
+          boltCoreMat.opacity = 0.8;
+          boltGlowMat.opacity = 0.8;
+
+          if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0.4';
+
+          // Strike 3 (SUPER POWER MAIN THUNDERBOLT BURST: 65.0 MAX POWER!)
+          setTimeout(() => {
+            generateLightningPath();
+            flashIntensity = 65.0;
+            boltCoreMat.opacity = 1.0;
+            boltGlowMat.opacity = 1.0;
+
+            if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0.75';
+
+            setTimeout(() => {
+              if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0.2';
+              const fadeOut = setInterval(() => {
+                flashIntensity *= 0.62;
+                boltCoreMat.opacity *= 0.62;
+                boltGlowMat.opacity *= 0.62;
+
+                if (flashOverlayRef.current) {
+                  const curOp = parseFloat(flashOverlayRef.current.style.opacity || '0');
+                  flashOverlayRef.current.style.opacity = Math.max(0, curOp * 0.6).toString();
+                }
+
+                if (flashIntensity < 0.2) {
+                  flashIntensity = 0;
+                  boltCoreMat.opacity = 0;
+                  boltGlowMat.opacity = 0;
+                  isFlashing = false;
+                  if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0';
+                  clearInterval(fadeOut);
+                }
+              }, 30);
+            }, 80);
+          }, 40);
+        }, 60);
+      }, 70);
+    };
+
     // Mouse Interaction
     let mouseX = 0;
     let mouseY = 0;
@@ -205,63 +488,109 @@ export default function CloudCanvas({ onScrollProgress }) {
 
     window.addEventListener('mousemove', handleMouseMove);
 
-    // GSAP ScrollTrigger Camera Animation & Sideways Cloud Parting:
-    // Phase 1 (0 to 0.38): Clouds & WELCOME split left & right sideways
-    // Phase 2 (0.38 to 0.93): Camera stays enveloped inside clouds behind BADAL VARSHNEY title
-    // Phase 3 (0.93 to 1.0): Canvas opacity fades out ONLY when transitioning into About section
+    // GSAP ScrollTrigger Cinematic 3D Cloud & Storm Animation
     const st = ScrollTrigger.create({
       trigger: '#cloud-hero-trigger',
       start: 'top top',
-      end: '+=2400',
+      end: '+=2800',
       scrub: 1,
       onUpdate: (self) => {
         const progress = self.progress;
 
-        // Sideways 3D Cloud Parting (0 to 0.38)
-        if (progress <= 0.38) {
-          const partRatio = progress / 0.38;
-          cloudParticles.forEach((particle) => {
-            if (particle.userData.initialX < 0) {
-              particle.position.x = particle.userData.initialX - partRatio * 450;
-            } else {
-              particle.position.x = particle.userData.initialX + partRatio * 450;
-            }
-          });
+        cloudGroup.rotation.y = Math.sin(progress * Math.PI * 0.8) * 0.35;
+        cloudGroup.rotation.x = Math.sin(progress * Math.PI) * 0.08;
+
+        let clearRatio = 0;
+        if (progress <= 0.28) {
+          clearRatio = 0;
+        } else if (progress > 0.28 && progress <= 0.74) {
+          const p = (progress - 0.28) / 0.46;
+          clearRatio = 0.5 - 0.5 * Math.cos(p * Math.PI);
+        } else if (progress > 0.74 && progress <= 0.84) {
+          clearRatio = 1.0;
+        } else {
+          // Continuous Cosine Smooth Transition from 1.0 -> 0.45 without any jerk
+          const p = Math.min(1.0, (progress - 0.84) / 0.16);
+          const smoothP = 0.5 - 0.5 * Math.cos(p * Math.PI);
+          clearRatio = 1.0 - smoothP * 0.55;
         }
 
+        // Dim cloud brightness smoothly as user enters About section (progress > 0.65)
+        let sectionDim = 1.0;
+        if (progress > 0.65) {
+          const dimProgress = Math.min(1.0, (progress - 0.65) / 0.25);
+          const smoothDim = 0.5 - 0.5 * Math.cos(dimProgress * Math.PI);
+          sectionDim = 1.0 - smoothDim * 0.72; // Smoothly dims down to 0.28 dark storm ambient
+        }
+
+        cloudParticles.forEach((particle) => {
+          particle.position.y = particle.userData.initialY + progress * 480;
+          particle.material.opacity = (0.94 - clearRatio * 0.50) * sectionDim;
+
+          const shiftAmount = clearRatio * 320;
+          if (particle.userData.initialX < 0) {
+            particle.position.x = particle.userData.initialX - shiftAmount;
+          } else {
+            particle.position.x = particle.userData.initialX + shiftAmount;
+          }
+        });
+
+        let targetCamZ = 850;
+        let targetCamY = 0;
+        let targetCamRotX = 0;
+        let targetCamFov = 60;
+
         if (progress <= 0.35) {
-          // Ascent & initial flight
           const p = progress / 0.35;
-          camera.position.y = p * 180;
-          camera.position.z = 800 - p * 350;
-          camera.rotation.x = p * 0.15;
-          camera.fov = 60 + p * 5;
-        } else if (progress > 0.35 && progress <= 0.93) {
-          // BADAL VARSHNEY state: camera stays inside cloud deck so clouds fill background
-          const p = (progress - 0.35) / 0.58;
-          camera.position.y = 180 * (1 - p);
-          camera.position.z = 450 - p * 550;
-          camera.rotation.x = 0.15 * (1 - p);
-          camera.fov = 65;
+          const smoothP = 0.5 - 0.5 * Math.cos(p * Math.PI);
+          targetCamZ = 850 - smoothP * 300;
+          targetCamY = smoothP * 80;
+          targetCamRotX = smoothP * 0.05;
+          targetCamFov = 60 + smoothP * 4;
+        } else if (progress > 0.35 && progress <= 0.72) {
+          const p = (progress - 0.35) / 0.37;
+          const smoothP = 0.5 - 0.5 * Math.cos(p * Math.PI);
+          targetCamZ = 550 - smoothP * 300;
+          targetCamY = 80 - smoothP * 160;
+          targetCamRotX = 0.05 - smoothP * 0.08;
+          targetCamFov = 64 + smoothP * 3;
+        } else if (progress > 0.72 && progress <= 0.84) {
+          const p = (progress - 0.72) / 0.12;
+          const smoothP = 0.5 - 0.5 * Math.cos(p * Math.PI);
+          targetCamZ = 250 - smoothP * 200;
+          targetCamY = -80 + smoothP * 40;
+          targetCamRotX = 0;
+          targetCamFov = 67;
         } else {
-          // Transition phase into next section (About section)
-          const p = (progress - 0.93) / 0.07;
-          camera.position.z = -100 - p * 300;
-          camera.rotation.x = 0;
-          camera.fov = 70;
+          // Smooth continuous camera easing into About section
+          const p = Math.min(1.0, (progress - 0.84) / 0.16);
+          const smoothP = 0.5 - 0.5 * Math.cos(p * Math.PI);
+          targetCamZ = 50 - smoothP * 150;
+          targetCamY = -40 - smoothP * 20;
+          targetCamRotX = 0;
+          targetCamFov = 67 + smoothP * 3;
+        }
+
+        camera.position.z = targetCamZ;
+        camera.position.y = targetCamY;
+        camera.rotation.x = targetCamRotX;
+        camera.fov = targetCamFov;
+
+        // Activate Storm Rain & Lightning immediately when BADAL VARSHNEY name begins emerging (progress > 0.38)
+        if (progress > 0.38) {
+          stormModeActive = true;
+          const rainRamp = Math.min(1.0, (progress - 0.38) / 0.12);
+          rainMaterial.opacity = 0.92 * rainRamp;
+        } else {
+          stormModeActive = false;
+          rainMaterial.opacity = 0;
         }
 
         camera.updateProjectionMatrix();
 
-        // Canvas opacity fadeout ONLY when transitioning into the next section (About section: progress > 0.93)
         if (mountRef.current) {
-          if (progress > 0.93) {
-            const fade = (progress - 0.93) / 0.07;
-            mountRef.current.style.opacity = Math.max(0, 1 - fade).toString();
-            mountRef.current.style.pointerEvents = 'none';
-          } else {
-            mountRef.current.style.opacity = '1';
-          }
+          mountRef.current.style.opacity = '1';
+          mountRef.current.style.pointerEvents = 'none';
         }
 
         if (onScrollProgress) {
@@ -269,6 +598,19 @@ export default function CloudCanvas({ onScrollProgress }) {
         }
       }
     });
+
+    // HIGH-FREQUENCY LIGHTNING TIMER (Triggers every 1.8s to 3.8s for intense storm action!)
+    let lightningTimer = null;
+    const scheduleNextLightning = () => {
+      const delay = 1800 + Math.random() * 2000;
+      lightningTimer = setTimeout(() => {
+        if (stormModeActive) {
+          triggerLightningStrike();
+        }
+        scheduleNextLightning();
+      }, delay);
+    };
+    scheduleNextLightning();
 
     // Animation Loop
     let animationFrameId;
@@ -278,18 +620,75 @@ export default function CloudCanvas({ onScrollProgress }) {
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Smooth mouse damping
       mouseX += (targetMouseX - mouseX) * 0.05;
       mouseY += (targetMouseY - mouseY) * 0.05;
-
       camera.position.x = mouseX * 0.4;
 
-      // Slow organic rotation & floating of cloud particles
       cloudParticles.forEach((particle) => {
         particle.material.rotation += particle.userData.rotationSpeed;
         particle.position.y =
           particle.userData.initialY + Math.sin(elapsedTime * 0.5 + particle.userData.floatOffset) * 12;
       });
+
+      // ----------------------------------------------------
+      // RAIN DROPS ANIMATION LOOP
+      // ----------------------------------------------------
+      if (rainMaterial.opacity > 0.01) {
+        const posArray = rainGeometry.attributes.position.array;
+        const colorArray = rainGeometry.attributes.color.array;
+
+        for (let i = 0; i < rainCount; i++) {
+          const d = rainData[i];
+          d.y -= d.speedY;
+          d.x += d.speedX;
+
+          if (d.y < -1200) {
+            d.y = 1000 + Math.random() * 300;
+            d.x = (Math.random() - 0.5) * 3400;
+          }
+
+          posArray[i * 6 + 0] = d.x;
+          posArray[i * 6 + 1] = d.y;
+          posArray[i * 6 + 2] = d.z;
+
+          posArray[i * 6 + 3] = d.x + d.speedX * 1.8;
+          posArray[i * 6 + 4] = d.y - d.length;
+          posArray[i * 6 + 5] = d.z;
+
+          // Super-Bright Rain Glow during Lightning Flashes
+          if (isFlashing) {
+            colorArray[i * 6 + 0] = 1.0;
+            colorArray[i * 6 + 1] = 1.0;
+            colorArray[i * 6 + 2] = 1.0;
+            colorArray[i * 6 + 3] = 1.0;
+            colorArray[i * 6 + 4] = 1.0;
+            colorArray[i * 6 + 5] = 1.0;
+          } else {
+            colorArray[i * 6 + 0] = d.baseColor.r;
+            colorArray[i * 6 + 1] = d.baseColor.g;
+            colorArray[i * 6 + 2] = d.baseColor.b;
+            colorArray[i * 6 + 3] = d.baseColor.r;
+            colorArray[i * 6 + 4] = d.baseColor.g;
+            colorArray[i * 6 + 5] = d.baseColor.b;
+          }
+        }
+        rainGeometry.attributes.position.needsUpdate = true;
+        rainGeometry.attributes.color.needsUpdate = true;
+      }
+
+      // ----------------------------------------------------
+      // HIGH-POWER LIGHTNING FLASH LIGHTING
+      // ----------------------------------------------------
+      lightningLight.intensity = flashIntensity * 4.5;
+      lightningFlashLight.intensity = flashIntensity * 3.5;
+
+      if (isFlashing) {
+        scene.fog.color.setHex(flashIntensity > 40 ? 0x38bdf8 : 0x1e293b);
+        ambientLight.intensity = 0.8 + flashIntensity * 0.45;
+      } else {
+        scene.fog.color.setHex(0x0c101c);
+        ambientLight.intensity = 0.8;
+      }
 
       renderer.render(scene, camera);
     };
@@ -308,6 +707,7 @@ export default function CloudCanvas({ onScrollProgress }) {
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
+      if (lightningTimer) clearTimeout(lightningTimer);
       cancelAnimationFrame(animationFrameId);
       st.kill();
       if (renderer.domElement && container.contains(renderer.domElement)) {
@@ -318,11 +718,22 @@ export default function CloudCanvas({ onScrollProgress }) {
   }, [onScrollProgress]);
 
   return (
-    <div
-      ref={mountRef}
-      className="fixed inset-0 z-10 pointer-events-none transition-opacity duration-300 ease-out"
-      style={{ opacity: 1 }}
-    />
+    <>
+      {/* 3D WebGL Canvas Engine */}
+      <div
+        ref={mountRef}
+        className="fixed inset-0 z-10 pointer-events-none transition-opacity duration-300 ease-out"
+        style={{ opacity: 1 }}
+      />
+      {/* Lightning Screen Flash Burst Overlay */}
+      <div
+        ref={flashOverlayRef}
+        className="fixed inset-0 z-15 pointer-events-none bg-sky-200/40 mix-blend-screen transition-opacity duration-75 ease-out"
+        style={{ opacity: 0 }}
+      />
+    </>
   );
 }
+
+
 

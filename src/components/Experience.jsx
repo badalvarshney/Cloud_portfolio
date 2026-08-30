@@ -57,7 +57,7 @@ export default function Experience() {
           </div>
 
           <p className="text-zinc-400 text-sm max-w-md leading-relaxed font-light">
-            A track record of continuous growth, engineering excellence, and pushing web animation boundaries.
+            Badal Varshney's professional track record in building high-speed web apps, 3D cloud motion interfaces, and full-stack solutions.
           </p>
         </div>
 
