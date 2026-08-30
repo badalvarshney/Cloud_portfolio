@@ -27,26 +27,27 @@ export default function Hero({ scrollProgress }) {
 
   const welcomeOpacity = Math.max(0, 1 - welcomeProgress * 1.35);
 
-  // 2. BADAL VARSHNEY 3D CENTER ZOOM & 360-DEGREE MULTI-DIRECTION EXPANSION (Scroll 0.42 to 1.00)
+  // 2. BADAL VARSHNEY 3D DEEP BACKWARD RECESSION (Scroll 0.42 to 1.00)
+  // Letters shoot backwards into deep cloud space rather than flying far left/right
   const badalLetters = ['B', 'A', 'D', 'A', 'L'];
   const badalVectors = [
-    { x: -170, y: -140, r: -55, scale: 5.2 }, // B -> Top-Left
-    { x: -130, y: 130, r: 45, scale: 4.8 }, // A -> Bottom-Left
-    { x: -10, y: -190, r: 15, scale: 5.6 }, // D -> Straight Up
-    { x: 150, y: -150, r: 60, scale: 5.0 }, // A -> Top-Right
-    { x: 180, y: 120, r: -40, scale: 4.7 }  // L -> Bottom-Right
+    { x: -35, y: -25, r: -25 }, // B -> Slight Upper-Left Backwards
+    { x: -20, y: 20, r: 20 },  // A -> Slight Lower-Left Backwards
+    { x: 0, y: -35, r: 0 },    // D -> Straight Backwards Deep Sky
+    { x: 25, y: -25, r: 25 },  // A -> Slight Upper-Right Backwards
+    { x: 35, y: 20, r: -20 }   // L -> Slight Lower-Right Backwards
   ];
 
   const varshneyLetters = ['V', 'A', 'R', 'S', 'H', 'N', 'E', 'Y'];
   const varshneyVectors = [
-    { x: -210, y: -40, r: -75, scale: 5.4 }, // V -> Far Middle-Left
-    { x: 190, y: -130, r: 50, scale: 4.9 }, // A -> Top-Far-Right
-    { x: -160, y: 180, r: -35, scale: 5.3 }, // R -> Deep Bottom-Left
-    { x: -90, y: -170, r: -25, scale: 4.6 }, // S -> Upper-Left
-    { x: 80, y: 190, r: 35, scale: 5.5 }, // H -> Deep Bottom-Center-Right
-    { x: 195, y: 140, r: 65, scale: 5.1 }, // N -> Bottom-Far-Right
-    { x: -140, y: -110, r: -45, scale: 4.7 }, // E -> Upper-Left Diagonal
-    { x: 220, y: 30, r: 80, scale: 5.8 }  // Y -> Far Middle-Right
+    { x: -45, y: -10, r: -35 }, // V
+    { x: 35, y: -25, r: 25 },  // A
+    { x: -30, y: 30, r: -15 }, // R
+    { x: -15, y: -30, r: -10 }, // S
+    { x: 15, y: 30, r: 15 },   // H
+    { x: 38, y: 22, r: 30 },   // N
+    { x: -25, y: -20, r: -20 }, // E
+    { x: 45, y: 10, r: 40 }    // Y
   ];
 
   // Calculate Zoom & Emergence Parameters based on Scroll
@@ -82,8 +83,8 @@ export default function Hero({ scrollProgress }) {
     heroBlur = p * 5;
   }
 
-  // Base scale during emergence (zooms in from center: 0.2 -> 1.0)
-  const emergenceScale = 0.2 + centerZoomProgress * 0.8;
+  // Base scale during emergence (Zooms OUT from giant 2.4x down to 1.0x focal center)
+  const emergenceScale = 2.4 - centerZoomProgress * 1.4;
 
   // Subtitle & Buttons Opacity during hyper zoom flythrough
   const subContentOpacity = flythroughProgress > 0
@@ -151,16 +152,17 @@ export default function Hero({ scrollProgress }) {
             ref={titleRef}
             className="font-display font-extrabold tracking-tight uppercase leading-none select-none drop-shadow-[0_15px_45px_rgba(255,255,255,0.45)] text-white flex flex-col items-center justify-center gap-1 sm:gap-2"
           >
-            {/* BADAL WORD (Center Zoom + Letter Separation) */}
+            {/* BADAL WORD (Deep Backwards Recession) */}
             <div className="flex items-center justify-center text-4xl sm:text-7xl md:text-9xl lg:text-[9.5rem] tracking-tighter drop-shadow-[0_0_35px_rgba(255,255,255,0.5)]">
               {badalLetters.map((char, index) => {
                 const vec = badalVectors[index];
 
-                // During Flythrough: letters zoom & spread outward from center
+                // During Flythrough: letters shoot BACKWARDS into deep cloud space
                 const lx = vec.x * flythroughProgress;
                 const ly = vec.y * flythroughProgress;
                 const lr = vec.r * flythroughProgress;
-                const ls = emergenceScale * (1 + (vec.scale - 1) * flythroughProgress);
+                const ls = emergenceScale * Math.max(0.04, 1 - flythroughProgress * 0.94);
+                const lBlur = flythroughProgress * 12;
 
                 return (
                   <span
@@ -168,6 +170,7 @@ export default function Hero({ scrollProgress }) {
                     className="inline-block transition-transform duration-75 ease-out"
                     style={{
                       transform: `translate(${lx}vw, ${ly}vh) rotate(${lr}deg) scale(${ls})`,
+                      filter: `blur(${lBlur}px)`,
                       transformOrigin: 'center center'
                     }}
                   >
@@ -177,16 +180,17 @@ export default function Hero({ scrollProgress }) {
               })}
             </div>
 
-            {/* VARSHNEY WORD (Center Zoom + Letter Separation) */}
+            {/* VARSHNEY WORD (Deep Backwards Recession) */}
             <div className="flex items-center justify-center text-2xl sm:text-5xl md:text-7xl lg:text-[7.5rem] tracking-tighter text-zinc-100 drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]">
               {varshneyLetters.map((char, index) => {
                 const vec = varshneyVectors[index];
 
-                // During Flythrough: letters zoom & spread outward from center
+                // During Flythrough: letters shoot BACKWARDS into deep cloud space
                 const lx = vec.x * flythroughProgress;
                 const ly = vec.y * flythroughProgress;
                 const lr = vec.r * flythroughProgress;
-                const ls = emergenceScale * (1 + (vec.scale - 1) * flythroughProgress);
+                const ls = emergenceScale * Math.max(0.04, 1 - flythroughProgress * 0.94);
+                const lBlur = flythroughProgress * 12;
 
                 return (
                   <span
@@ -194,6 +198,7 @@ export default function Hero({ scrollProgress }) {
                     className="inline-block transition-transform duration-75 ease-out"
                     style={{
                       transform: `translate(${lx}vw, ${ly}vh) rotate(${lr}deg) scale(${ls})`,
+                      filter: `blur(${lBlur}px)`,
                       transformOrigin: 'center center'
                     }}
                   >
