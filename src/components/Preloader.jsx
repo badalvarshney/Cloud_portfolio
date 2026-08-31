@@ -10,9 +10,9 @@ export default function Preloader({ onComplete }) {
     // Lock scroll during preloading
     document.body.style.overflow = 'hidden';
 
-    // 8-Second Loader (8000ms)
-    const duration = 8000;
-    const intervalTime = 40;
+    // 1.2-Second Sleek Loader (1200ms)
+    const duration = 1200;
+    const intervalTime = 25;
     const increment = 100 / (duration / intervalTime);
 
     const timer = setInterval(() => {
@@ -28,7 +28,7 @@ export default function Preloader({ onComplete }) {
             document.body.style.overflow = '';
             setRemoved(true);
             if (onComplete) onComplete();
-          }, 1100);
+          }, 800);
 
           return 100;
         }

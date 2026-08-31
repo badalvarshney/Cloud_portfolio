@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Mail, Send, Copy, Check, Github, Linkedin, Twitter, MessageSquare, Sparkles, Globe } from 'lucide-react';
 import GlassWallRainDrip from './GlassWallRainDrip';
 
-export default function Contact() {
+function Contact() {
   const [copied, setCopied] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
@@ -222,3 +222,5 @@ export default function Contact() {
     </section>
   );
 }
+
+export default React.memo(Contact);

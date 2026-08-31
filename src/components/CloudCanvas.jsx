@@ -29,22 +29,21 @@ export default function CloudCanvas({ onScrollProgress }) {
     // Renderer setup
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     container.appendChild(renderer.domElement);
 
-    // Volumetric Procedural Cloud Texture Generator
+    // Volumetric Procedural Cloud Texture Generator (Optimized 256x256 canvas for zero TBT)
     const createRealisticCloudTexture = (variation = 0) => {
       const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 512;
+      canvas.width = 256;
+      canvas.height = 256;
       const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, 512, 512);
 
       // Dark bottom shadow base for 3D depth
       const shadows = [
-        { x: 256, y: 310, r: 170, col: 'rgba(30, 40, 60, 0.75)' },
-        { x: 170, y: 330, r: 135, col: 'rgba(25, 35, 55, 0.65)' },
-        { x: 345, y: 330, r: 135, col: 'rgba(25, 35, 55, 0.65)' }
+        { x: 128, y: 155, r: 85, col: 'rgba(30, 40, 60, 0.75)' },
+        { x: 85, y: 165, r: 68, col: 'rgba(25, 35, 55, 0.65)' },
+        { x: 172, y: 165, r: 68, col: 'rgba(25, 35, 55, 0.65)' }
       ];
 
       shadows.forEach(p => {
@@ -60,14 +59,14 @@ export default function CloudCanvas({ onScrollProgress }) {
 
       // White Cumulus Lobes
       const whitePuffs = [
-        { x: 256, y: 230, r: 155 },
-        { x: 175, y: 240, r: 130 },
-        { x: 335, y: 240, r: 130 },
-        { x: 115, y: 275, r: 100 },
-        { x: 395, y: 275, r: 100 },
-        { x: 210, y: 185, r: 110 },
-        { x: 300, y: 180, r: 115 },
-        { x: 256, y: 160, r: 100 }
+        { x: 128, y: 115, r: 78 },
+        { x: 88, y: 120, r: 65 },
+        { x: 168, y: 120, r: 65 },
+        { x: 58, y: 138, r: 50 },
+        { x: 198, y: 138, r: 50 },
+        { x: 105, y: 92, r: 55 },
+        { x: 150, y: 90, r: 58 },
+        { x: 128, y: 80, r: 50 }
       ];
 
       whitePuffs.forEach(p => {
@@ -85,13 +84,13 @@ export default function CloudCanvas({ onScrollProgress }) {
       });
 
       // Fluffy Edge Billows
-      const billowCount = 28;
+      const billowCount = 24;
       for (let i = 0; i < billowCount; i++) {
         const angle = (i / billowCount) * Math.PI * 2;
-        const dist = 75 + Math.sin(i * 3 + variation) * 45;
-        const bx = 256 + Math.cos(angle) * dist * 1.3;
-        const by = 230 + Math.sin(angle) * dist * 0.75;
-        const br = 42 + (i % 5) * 8;
+        const dist = 38 + Math.sin(i * 3 + variation) * 22;
+        const bx = 128 + Math.cos(angle) * dist * 1.3;
+        const by = 115 + Math.sin(angle) * dist * 0.75;
+        const br = 21 + (i % 5) * 4;
 
         const grad = ctx.createRadialGradient(bx - br * 0.2, by - br * 0.2, 0, bx, by, br);
         grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
@@ -127,11 +126,12 @@ export default function CloudCanvas({ onScrollProgress }) {
     const cloudGroup = new THREE.Group();
     const cloudParticles = [];
 
-    // LAYER 1: Dense Cover Clouds
-    const coverCloudCount = 110;
+    // LAYER 1: Dense Cover Clouds (Using cloned materials for individual opacity control)
+    const coverCloudCount = 90;
     for (let f = 0; f < coverCloudCount; f++) {
-      const mat = cloudMaterials[f % cloudMaterials.length];
-      const sprite = new THREE.Sprite(mat.clone());
+      const baseMat = cloudMaterials[f % cloudMaterials.length];
+      const mat = baseMat.clone();
+      const sprite = new THREE.Sprite(mat);
 
       const x = (Math.random() - 0.5) * 2600;
       const y = (Math.random() - 0.5) * 1600;
@@ -154,10 +154,11 @@ export default function CloudCanvas({ onScrollProgress }) {
     }
 
     // LAYER 2: Background Canopy Clouds
-    const canopyCloudCount = 50;
+    const canopyCloudCount = 40;
     for (let c = 0; c < canopyCloudCount; c++) {
-      const mat = cloudMaterials[c % cloudMaterials.length];
-      const sprite = new THREE.Sprite(mat.clone());
+      const baseMat = cloudMaterials[c % cloudMaterials.length];
+      const mat = baseMat.clone();
+      const sprite = new THREE.Sprite(mat);
 
       const x = (Math.random() - 0.5) * 2400;
       const y = (Math.random() - 0.5) * 1400;
@@ -192,69 +193,6 @@ export default function CloudCanvas({ onScrollProgress }) {
     const shadowLight = new THREE.DirectionalLight(0x354565, 1.0);
     shadowLight.position.set(-300, -500, -300);
     scene.add(shadowLight);
-
-    // ----------------------------------------------------
-    // REALISTIC VOLUMETRIC 3D RAIN ENGINE (1,800 Tangible Raindrops)
-    // ----------------------------------------------------
-    const rainCount = 1800;
-    const rainPositions = new Float32Array(rainCount * 6);
-    const rainColors = new Float32Array(rainCount * 6);
-    const rainData = [];
-
-    for (let i = 0; i < rainCount; i++) {
-      const x = (Math.random() - 0.5) * 3400;
-      const y = (Math.random() - 0.5) * 2400 + 400;
-      const z = (Math.random() - 0.5) * 2400 + 200;
-
-      const length = 50 + Math.random() * 75;
-      const speedY = 32 + Math.random() * 28;
-      const speedX = -5.0 - Math.random() * 4.0; // Wind slant angle (~15°)
-
-      let col = new THREE.Color(0xa5f3fc);
-      if (z > 350) {
-        col.setHex(0xffffff); // Foreground glass drop highlight
-      } else if (z > -200) {
-        col.setHex(0x93c5fd); // Midground rain streak
-      } else {
-        col.setHex(0x38bdf8); // Background rain drizzle
-      }
-
-      rainPositions[i * 6 + 0] = x;
-      rainPositions[i * 6 + 1] = y;
-      rainPositions[i * 6 + 2] = z;
-
-      rainPositions[i * 6 + 3] = x + speedX * 1.8;
-      rainPositions[i * 6 + 4] = y - length;
-      rainPositions[i * 6 + 5] = z;
-
-      rainColors[i * 6 + 0] = col.r;
-      rainColors[i * 6 + 1] = col.g;
-      rainColors[i * 6 + 2] = col.b;
-      rainColors[i * 6 + 3] = col.r;
-      rainColors[i * 6 + 4] = col.g;
-      rainColors[i * 6 + 5] = col.b;
-
-      rainData.push({
-        x, y, z, length, speedY, speedX,
-        initialY: y,
-        baseColor: col
-      });
-    }
-
-    const rainGeometry = new THREE.BufferGeometry();
-    rainGeometry.setAttribute('position', new THREE.BufferAttribute(rainPositions, 3));
-    rainGeometry.setAttribute('color', new THREE.BufferAttribute(rainColors, 3));
-
-    const rainMaterial = new THREE.LineBasicMaterial({
-      vertexColors: true,
-      transparent: true,
-      opacity: 0,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false
-    });
-
-    const rainLines = new THREE.LineSegments(rainGeometry, rainMaterial);
-    scene.add(rainLines);
 
     // ----------------------------------------------------
     // SUPERCHARGED HIGH-POWER LIGHTNING (BIJLI) ENGINE
@@ -302,7 +240,7 @@ export default function CloudCanvas({ onScrollProgress }) {
 
     let isFlashing = false;
     let flashIntensity = 0;
-    let stormModeActive = false;
+    let stormModeActive = true;
 
     // Generate heavy multi-branched electric lightning path right in front of camera
     const generateLightningPath = () => {
@@ -515,12 +453,12 @@ export default function CloudCanvas({ onScrollProgress }) {
           clearRatio = 1.0 - smoothP * 0.55;
         }
 
-        // Dim cloud brightness smoothly as user enters About section (progress > 0.65)
+        // Keep cloud brightness rich & visible as user enters About section (progress > 0.65)
         let sectionDim = 1.0;
         if (progress > 0.65) {
           const dimProgress = Math.min(1.0, (progress - 0.65) / 0.25);
           const smoothDim = 0.5 - 0.5 * Math.cos(dimProgress * Math.PI);
-          sectionDim = 1.0 - smoothDim * 0.72; // Smoothly dims down to 0.28 dark storm ambient
+          sectionDim = 1.0 - smoothDim * 0.25; // Smoothly dims to 0.75 rich cloud opacity
         }
 
         cloudParticles.forEach((particle) => {
@@ -576,15 +514,7 @@ export default function CloudCanvas({ onScrollProgress }) {
         camera.rotation.x = targetCamRotX;
         camera.fov = targetCamFov;
 
-        // Activate 3D Sky Rain continuously starting from Hero emergence (progress > 0.38)
-        if (progress > 0.38) {
-          stormModeActive = true;
-          const rainRamp = Math.min(1.0, (progress - 0.38) / 0.12);
-          rainMaterial.opacity = 0.92 * rainRamp;
-        } else {
-          stormModeActive = false;
-          rainMaterial.opacity = 0;
-        }
+        stormModeActive = true;
 
         camera.updateProjectionMatrix();
 
@@ -593,7 +523,9 @@ export default function CloudCanvas({ onScrollProgress }) {
           mountRef.current.style.pointerEvents = 'none';
         }
 
-        if (onScrollProgress) {
+        let lastReportedProgress = -1;
+        if (onScrollProgress && Math.abs(progress - lastReportedProgress) > 0.002) {
+          lastReportedProgress = progress;
           onScrollProgress(progress);
         }
       }
@@ -614,9 +546,11 @@ export default function CloudCanvas({ onScrollProgress }) {
 
     // Animation Loop
     let animationFrameId;
+    let isTabActive = true;
     const clock = new THREE.Clock();
 
     const animate = () => {
+      if (!isTabActive) return;
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
@@ -630,51 +564,7 @@ export default function CloudCanvas({ onScrollProgress }) {
           particle.userData.initialY + Math.sin(elapsedTime * 0.5 + particle.userData.floatOffset) * 12;
       });
 
-      // ----------------------------------------------------
-      // RAIN DROPS ANIMATION LOOP
-      // ----------------------------------------------------
-      if (rainMaterial.opacity > 0.01) {
-        const posArray = rainGeometry.attributes.position.array;
-        const colorArray = rainGeometry.attributes.color.array;
 
-        for (let i = 0; i < rainCount; i++) {
-          const d = rainData[i];
-          d.y -= d.speedY;
-          d.x += d.speedX;
-
-          if (d.y < -1200) {
-            d.y = 1000 + Math.random() * 300;
-            d.x = (Math.random() - 0.5) * 3400;
-          }
-
-          posArray[i * 6 + 0] = d.x;
-          posArray[i * 6 + 1] = d.y;
-          posArray[i * 6 + 2] = d.z;
-
-          posArray[i * 6 + 3] = d.x + d.speedX * 1.8;
-          posArray[i * 6 + 4] = d.y - d.length;
-          posArray[i * 6 + 5] = d.z;
-
-          // Super-Bright Rain Glow during Lightning Flashes
-          if (isFlashing) {
-            colorArray[i * 6 + 0] = 1.0;
-            colorArray[i * 6 + 1] = 1.0;
-            colorArray[i * 6 + 2] = 1.0;
-            colorArray[i * 6 + 3] = 1.0;
-            colorArray[i * 6 + 4] = 1.0;
-            colorArray[i * 6 + 5] = 1.0;
-          } else {
-            colorArray[i * 6 + 0] = d.baseColor.r;
-            colorArray[i * 6 + 1] = d.baseColor.g;
-            colorArray[i * 6 + 2] = d.baseColor.b;
-            colorArray[i * 6 + 3] = d.baseColor.r;
-            colorArray[i * 6 + 4] = d.baseColor.g;
-            colorArray[i * 6 + 5] = d.baseColor.b;
-          }
-        }
-        rainGeometry.attributes.position.needsUpdate = true;
-        rainGeometry.attributes.color.needsUpdate = true;
-      }
 
       // ----------------------------------------------------
       // HIGH-POWER LIGHTNING FLASH LIGHTING
@@ -695,6 +585,22 @@ export default function CloudCanvas({ onScrollProgress }) {
 
     animate();
 
+    // Visibility change handler (pauses Three.js loop when tab is hidden)
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        isTabActive = false;
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      } else {
+        if (!isTabActive) {
+          isTabActive = true;
+          clock.getDelta(); // reset delta to prevent jump
+          animate();
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     // Resize Handler
     const handleResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -707,6 +613,7 @@ export default function CloudCanvas({ onScrollProgress }) {
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (lightningTimer) clearTimeout(lightningTimer);
       cancelAnimationFrame(animationFrameId);
       st.kill();
@@ -715,6 +622,7 @@ export default function CloudCanvas({ onScrollProgress }) {
       }
       scene.clear();
     };
+
   }, [onScrollProgress]);
 
   return (

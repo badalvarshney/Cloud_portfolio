@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Preloader from './components/Preloader';
 import CloudCanvas from './components/CloudCanvas';
 import Navbar from './components/Navbar';
@@ -14,8 +14,12 @@ import CustomCursor from './components/CustomCursor';
 export default function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
 
+  const handleScrollProgress = useCallback((progress) => {
+    setScrollProgress(progress);
+  }, []);
+
   return (
-    <div className="relative min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans bg-noise">
+    <div className="relative min-h-screen bg-black text-white selection:bg-white selection:text-black font-sans">
       {/* 8-Second BADAL & Cloud Preloader (Locks scroll during loading) */}
       <Preloader />
 
@@ -23,7 +27,7 @@ export default function App() {
       <CustomCursor />
 
       {/* 3D Volumetric Cloud Flythrough Background Engine */}
-      <CloudCanvas onScrollProgress={setScrollProgress} />
+      <CloudCanvas onScrollProgress={handleScrollProgress} />
 
       {/* Navigation Header (Appears after passing through clouds) */}
       <Navbar scrollProgress={scrollProgress} />

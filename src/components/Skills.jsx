@@ -66,7 +66,7 @@ const TECH_CATEGORIES = [
   }
 ];
 
-export default function Skills() {
+function Skills() {
   return (
     <section id="skills" className="relative py-32 px-6 md:px-12 section-dimming-3 z-20 overflow-hidden section-divider">
 
@@ -148,3 +148,5 @@ export default function Skills() {
     </section>
   );
 }
+
+export default React.memo(Skills);

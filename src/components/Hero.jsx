@@ -1,7 +1,39 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import TextRainCanvas from './TextRainCanvas';
 
 export default function Hero({ scrollProgress }) {
   const titleRef = useRef(null);
+  const letterRefs = useRef([]);
+  const [letterRects, setLetterRects] = useState([]);
+
+  useEffect(() => {
+    const updateRects = () => {
+      if (letterRefs.current && letterRefs.current.length > 0) {
+        const rects = letterRefs.current
+          .map(el => (el ? el.getBoundingClientRect() : null))
+          .filter(Boolean);
+        setLetterRects(rects);
+      }
+    };
+
+    updateRects();
+    window.addEventListener('resize', updateRects);
+    window.addEventListener('scroll', updateRects, { passive: true });
+    return () => {
+      window.removeEventListener('resize', updateRects);
+      window.removeEventListener('scroll', updateRects);
+    };
+  }, [scrollProgress]);
+
+  const [hasRainStarted, setHasRainStarted] = useState(false);
+
+  useEffect(() => {
+    if (scrollProgress > 0.35 && !hasRainStarted) {
+      setHasRainStarted(true);
+    } else if (scrollProgress <= 0.05 && hasRainStarted) {
+      setHasRainStarted(false);
+    }
+  }, [scrollProgress, hasRainStarted]);
 
   // 1. WELCOME 7-Letter Explosion Trajectories (Scroll 0.04 to 0.40)
   // Each letter shatters & flies in a unique 3D direction
@@ -99,6 +131,14 @@ export default function Hero({ scrollProgress }) {
       {/* Sticky Hero Viewport */}
       <div className="sticky top-0 h-screen w-full flex flex-col justify-between items-center px-6 md:px-12 py-20 overflow-hidden z-20">
 
+        {/* Text Rain Canvas Engine (Triggers on BADAL VARSHNEY emergence & STAYS ON continuously) */}
+        {hasRainStarted && (
+          <TextRainCanvas
+            letterRects={letterRects}
+            isTextVisible={heroOpacity > 0.35 && flythroughProgress < 0.4}
+          />
+        )}
+
         {/* Top Spacer */}
         <div className="h-10"></div>
 
@@ -157,7 +197,6 @@ export default function Hero({ scrollProgress }) {
               {badalLetters.map((char, index) => {
                 const vec = badalVectors[index];
 
-                // During Flythrough: letters shoot BACKWARDS into deep cloud space
                 const lx = vec.x * flythroughProgress;
                 const ly = vec.y * flythroughProgress;
                 const lr = vec.r * flythroughProgress;
@@ -167,7 +206,8 @@ export default function Hero({ scrollProgress }) {
                 return (
                   <span
                     key={index}
-                    className="inline-block transition-transform duration-75 ease-out"
+                    ref={(el) => (letterRefs.current[index] = el)}
+                    className="inline-block transition-transform duration-75 ease-out pointer-events-auto"
                     style={{
                       transform: `translate(${lx}vw, ${ly}vh) rotate(${lr}deg) scale(${ls})`,
                       filter: `blur(${lBlur}px)`,
@@ -185,7 +225,6 @@ export default function Hero({ scrollProgress }) {
               {varshneyLetters.map((char, index) => {
                 const vec = varshneyVectors[index];
 
-                // During Flythrough: letters shoot BACKWARDS into deep cloud space
                 const lx = vec.x * flythroughProgress;
                 const ly = vec.y * flythroughProgress;
                 const lr = vec.r * flythroughProgress;
@@ -195,7 +234,8 @@ export default function Hero({ scrollProgress }) {
                 return (
                   <span
                     key={index}
-                    className="inline-block transition-transform duration-75 ease-out"
+                    ref={(el) => (letterRefs.current[badalLetters.length + index] = el)}
+                    className="inline-block transition-transform duration-75 ease-out pointer-events-auto"
                     style={{
                       transform: `translate(${lx}vw, ${ly}vh) rotate(${lr}deg) scale(${ls})`,
                       filter: `blur(${lBlur}px)`,

@@ -9,6 +9,65 @@ export default function GlassWallRainDrip({ density = 'full' }) {
 
     const ctx = canvas.getContext('2d');
     let animationFrameId;
+    let isVisible = true;
+    let lastFrameTime = 0;
+
+    const isStatic = density === 'static' || density === 'static-dew';
+    const isMinimal = density === 'minimal';
+
+    const maxDrops = isStatic ? 0 : (isMinimal ? 6 : 40);
+    const spawnFreq = isMinimal ? 36 : 9;
+    const dewDivisor = isStatic ? 75 : (isMinimal ? 45 : 22);
+
+    // Offscreen canvas for pre-rendered static dew drops
+    const dewCanvas = document.createElement('canvas');
+    const dewCtx = dewCanvas.getContext('2d');
+
+    // Helper to draw clean glass raindrop onto target context
+    const drawGlassDropOnCtx = (targetCtx, x, y, r, opacity = 1) => {
+      targetCtx.save();
+      targetCtx.globalAlpha = opacity;
+
+      const grad = targetCtx.createRadialGradient(x - r * 0.25, y - r * 0.25, r * 0.1, x, y, r);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+      grad.addColorStop(0.4, 'rgba(210, 235, 255, 0.55)');
+      grad.addColorStop(1, 'rgba(40, 60, 90, 0.4)');
+
+      targetCtx.beginPath();
+      targetCtx.arc(x, y, r, 0, Math.PI * 2);
+      targetCtx.fillStyle = grad;
+      targetCtx.fill();
+
+      targetCtx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+      targetCtx.lineWidth = 1.0;
+      targetCtx.stroke();
+
+      targetCtx.beginPath();
+      targetCtx.arc(x - r * 0.3, y - r * 0.3, r * 0.25, 0, Math.PI * 2);
+      targetCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      targetCtx.fill();
+
+      targetCtx.restore();
+    };
+
+    const buildDewLayer = () => {
+      dewCanvas.width = canvas.width;
+      dewCanvas.height = canvas.height;
+      dewCtx.clearRect(0, 0, dewCanvas.width, dewCanvas.height);
+
+      const dewCount = Math.floor((canvas.width || window.innerWidth) / dewDivisor);
+      for (let i = 0; i < dewCount; i++) {
+        const x = Math.random() * (canvas.width || window.innerWidth);
+        const y = Math.random() * (canvas.height || window.innerHeight);
+        const r = Math.random() * 3 + 1.8;
+        const alpha = isStatic
+          ? Math.random() * 0.2 + 0.2
+          : isMinimal
+          ? Math.random() * 0.25 + 0.25
+          : Math.random() * 0.35 + 0.4;
+        drawGlassDropOnCtx(dewCtx, x, y, r, alpha);
+      }
+    };
 
     const resize = () => {
       if (canvas.parentElement) {
@@ -18,27 +77,21 @@ export default function GlassWallRainDrip({ density = 'full' }) {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
       }
+      buildDewLayer();
+      if (isStatic) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(dewCanvas, 0, 0);
+      }
     };
+
     resize();
     window.addEventListener('resize', resize);
 
-    const isStatic = density === 'static' || density === 'static-dew';
-    const isMinimal = density === 'minimal';
-
-    const maxDrops = isStatic ? 0 : (isMinimal ? 6 : 40);
-    const spawnFreq = isMinimal ? 36 : 9;
-    const dewDivisor = isStatic ? 75 : (isMinimal ? 45 : 22);
-
-    // Condensation Dew Drops bounded to section container
-    const dewDrops = [];
-    const dewCount = Math.floor((canvas.width || window.innerWidth) / dewDivisor);
-    for (let i = 0; i < dewCount; i++) {
-      dewDrops.push({
-        x: Math.random() * (canvas.width || window.innerWidth),
-        y: Math.random() * (canvas.height || window.innerHeight),
-        r: Math.random() * 3 + 1.8,
-        alpha: isStatic ? Math.random() * 0.2 + 0.2 : (isMinimal ? Math.random() * 0.25 + 0.25 : Math.random() * 0.35 + 0.4)
-      });
+    // If static mode, draw once and return (no requestAnimationFrame needed!)
+    if (isStatic) {
+      return () => {
+        window.removeEventListener('resize', resize);
+      };
     }
 
     // Trickling Rain Droplets
@@ -46,42 +99,23 @@ export default function GlassWallRainDrip({ density = 'full' }) {
     const splashes = [];
     let frameCount = 0;
 
-    // Helper to draw clean, subtle glass raindrop
-    const drawGlassDrop = (x, y, r, opacity = 1) => {
-      ctx.save();
-      ctx.globalAlpha = opacity;
+    const render = (now) => {
+      if (!isVisible) return;
 
-      // Subtle Liquid Body Gradient
-      const grad = ctx.createRadialGradient(x - r * 0.25, y - r * 0.25, r * 0.1, x, y, r);
-      grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
-      grad.addColorStop(0.4, 'rgba(210, 235, 255, 0.55)');
-      grad.addColorStop(1, 'rgba(40, 60, 90, 0.4)');
+      animationFrameId = requestAnimationFrame(render);
 
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
+      // Throttle to ~30 FPS for smooth performance with minimal CPU
+      if (now - lastFrameTime < 32) return;
+      lastFrameTime = now;
 
-      // Soft Rim Outline
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
-      ctx.lineWidth = 1.0;
-      ctx.stroke();
-
-      // Subtle Specular Reflection Highlight
-      ctx.beginPath();
-      ctx.arc(x - r * 0.3, y - r * 0.3, r * 0.25, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-      ctx.fill();
-
-      ctx.restore();
-    };
-
-    const render = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       frameCount++;
 
-      // Spawn subtle raindrops inside section bounds (DISABLED for static mode)
-      if (!isStatic && frameCount % spawnFreq === 0) {
+      // Fast 1-call blit for static dew drops layer
+      ctx.drawImage(dewCanvas, 0, 0);
+
+      // Spawn subtle raindrops inside section bounds
+      if (frameCount % spawnFreq === 0) {
         const impactX = Math.random() * canvas.width;
         const impactY = Math.random() * (canvas.height * 0.3);
 
@@ -108,9 +142,6 @@ export default function GlassWallRainDrip({ density = 'full' }) {
           tricklingDrops.shift();
         }
       }
-
-      // Draw Dew Drops
-      dewDrops.forEach(d => drawGlassDrop(d.x, d.y, d.r, d.alpha));
 
       // Draw Impact Splash Rings
       for (let s = splashes.length - 1; s >= 0; s--) {
@@ -165,7 +196,7 @@ export default function GlassWallRainDrip({ density = 'full' }) {
           }
         }
 
-        drawGlassDrop(drop.x, drop.y, drop.r, 0.9);
+        drawGlassDropOnCtx(ctx, drop.x, drop.y, drop.r, 0.9);
 
         if (drop.y > canvas.height + 20) {
           drop.y = -10;
@@ -173,17 +204,36 @@ export default function GlassWallRainDrip({ density = 'full' }) {
           drop.trail = [];
         }
       }
-
-      animationFrameId = requestAnimationFrame(render);
     };
 
-    render();
+    // IntersectionObserver to pause loop when section is offscreen
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting) {
+          if (!isVisible) {
+            isVisible = true;
+            animationFrameId = requestAnimationFrame(render);
+          }
+        } else {
+          isVisible = false;
+          if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+          }
+        }
+      },
+      { threshold: 0.01 }
+    );
+
+    observer.observe(canvas);
+    animationFrameId = requestAnimationFrame(render);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resize);
     };
-  }, []);
+  }, [density]);
 
   return (
     <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
@@ -191,3 +241,4 @@ export default function GlassWallRainDrip({ density = 'full' }) {
     </div>
   );
 }
+

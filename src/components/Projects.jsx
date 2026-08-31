@@ -53,7 +53,7 @@ const PROJECTS_DATA = [
   }
 ];
 
-export default function Projects() {
+function Projects() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [activeModalProject, setActiveModalProject] = useState(null);
 
@@ -112,6 +112,8 @@ export default function Projects() {
                 <img
                   src={project.image}
                   alt={project.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover grayscale contrast-125 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700 opacity-80 group-hover:opacity-100"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
@@ -248,3 +250,5 @@ export default function Projects() {
     </section>
   );
 }
+
+export default React.memo(Projects);

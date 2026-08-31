@@ -37,10 +37,8 @@ h1, h2, h3, h4, .font-display {
 
 /* Custom Utilities */
 .glass-panel {
-  background: rgba(18, 18, 21, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 16, 26, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .glass-panel-hover {
@@ -48,9 +46,9 @@ h1, h2, h3, h4, .font-display {
 }
 
 .glass-panel-hover:hover {
-  background: rgba(28, 28, 35, 0.85);
+  background: rgba(20, 28, 42, 0.75);
   border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
 }
 
 .text-gradient {
@@ -72,27 +70,21 @@ h1, h2, h3, h4, .font-display {
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
 
-/* Noise overlay */
-.bg-noise {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-}
-
-/* Continuous Section Dimming Styles */
+/* Continuous Section Dimming Styles (Transparent to reveal 3D clouds & rain) */
 .section-dimming-1 {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(24, 24, 27, 0.6) 30%, rgba(18, 18, 20, 0.85) 100%);
-  backdrop-filter: blur(8px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(12, 16, 26, 0.3) 30%, rgba(10, 14, 24, 0.45) 100%);
 }
 
 .section-dimming-2 {
-  background: linear-gradient(180deg, rgba(18, 18, 20, 0.85) 0%, rgba(14, 14, 16, 0.92) 50%, rgba(10, 10, 12, 0.98) 100%);
+  background: linear-gradient(180deg, rgba(10, 14, 24, 0.45) 0%, rgba(8, 12, 20, 0.55) 50%, rgba(6, 10, 16, 0.65) 100%);
 }
 
 .section-dimming-3 {
-  background: linear-gradient(180deg, rgba(10, 10, 12, 0.98) 0%, rgba(7, 7, 9, 1) 50%, rgba(5, 5, 7, 1) 100%);
+  background: linear-gradient(180deg, rgba(6, 10, 16, 0.65) 0%, rgba(5, 8, 14, 0.75) 50%, rgba(4, 6, 10, 0.82) 100%);
 }
 
 .section-dimming-4 {
-  background: linear-gradient(180deg, rgba(5, 5, 7, 1) 0%, rgba(3, 3, 4, 1) 50%, rgba(0, 0, 0, 1) 100%);
+  background: linear-gradient(180deg, rgba(4, 6, 10, 0.82) 0%, rgba(2, 4, 8, 0.9) 50%, rgba(0, 0, 0, 0.95) 100%);
 }
 
 /* Smooth Soft Divider Line */

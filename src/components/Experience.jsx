@@ -40,7 +40,7 @@ const EXPERIENCES = [
   }
 ];
 
-export default function Experience() {
+function Experience() {
   return (
     <section id="experience" className="relative py-32 px-6 md:px-12 section-dimming-3 z-20 overflow-hidden section-divider">
 
@@ -123,3 +123,5 @@ export default function Experience() {
     </section>
   );
 }
+
+export default React.memo(Experience);
