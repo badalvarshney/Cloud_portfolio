@@ -1,5 +1,6 @@
 import React from 'react';
 import { Briefcase, Calendar, MapPin, Sparkles, CheckCircle } from 'lucide-react';
+import GlassWallRainDrip from './GlassWallRainDrip';
 
 const EXPERIENCES = [
   {
@@ -42,7 +43,11 @@ const EXPERIENCES = [
 export default function Experience() {
   return (
     <section id="experience" className="relative py-32 px-6 md:px-12 section-dimming-3 z-20 overflow-hidden section-divider">
-      <div className="max-w-7xl mx-auto">
+
+      {/* Only static dew drops for bottom 2 sections (zero moving drops) */}
+      <GlassWallRainDrip density="static" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
         
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">

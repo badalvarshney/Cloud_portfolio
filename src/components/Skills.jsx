@@ -1,5 +1,6 @@
 import React from 'react';
 import { Cpu, Code2, Layers, Palette, Smartphone, Wrench, Bot, Monitor, CheckCircle2, Sparkles } from 'lucide-react';
+import GlassWallRainDrip from './GlassWallRainDrip';
 
 const TECH_CATEGORIES = [
   {
@@ -68,7 +69,11 @@ const TECH_CATEGORIES = [
 export default function Skills() {
   return (
     <section id="skills" className="relative py-32 px-6 md:px-12 section-dimming-3 z-20 overflow-hidden section-divider">
-      <div className="max-w-7xl mx-auto">
+
+      {/* Very subtle minimal water droplets (bahut hi kam chalte hue) */}
+      <GlassWallRainDrip density="minimal" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Section Title */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">

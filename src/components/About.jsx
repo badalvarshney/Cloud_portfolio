@@ -1,5 +1,6 @@
 import React from 'react';
 import { Cloud, Zap, ShieldCheck, Terminal, Compass, Eye, Sparkles } from 'lucide-react';
+import GlassWallRainDrip from './GlassWallRainDrip';
 
 export default function About({ scrollProgress = 1 }) {
   // Reveal About section smoothly after BADAL VARSHNEY name shatter flythrough completes (progress >= 0.78)
@@ -32,6 +33,9 @@ export default function About({ scrollProgress = 1 }) {
       {/* Background Subtle Grid & Light Glow */}
       <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none"></div>
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-white/5 rounded-full blur-[140px] pointer-events-none"></div>
+
+      {/* Glass Wall Rain Drip Engine (Mounted directly inside About section background) */}
+      <GlassWallRainDrip scrollProgress={scrollProgress} />
 
       <div className="max-w-7xl mx-auto relative z-10">
 

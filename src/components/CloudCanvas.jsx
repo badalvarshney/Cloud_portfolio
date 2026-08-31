@@ -576,7 +576,7 @@ export default function CloudCanvas({ onScrollProgress }) {
         camera.rotation.x = targetCamRotX;
         camera.fov = targetCamFov;
 
-        // Activate Storm Rain & Lightning immediately when BADAL VARSHNEY name begins emerging (progress > 0.38)
+        // Activate 3D Sky Rain continuously starting from Hero emergence (progress > 0.38)
         if (progress > 0.38) {
           stormModeActive = true;
           const rainRamp = Math.min(1.0, (progress - 0.38) / 0.12);

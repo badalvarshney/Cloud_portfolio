@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ExternalLink, Github, Layers, ArrowUpRight, Eye, Code, X } from 'lucide-react';
+import GlassWallRainDrip from './GlassWallRainDrip';
 
 const PROJECTS_DATA = [
   {
@@ -65,7 +66,10 @@ export default function Projects() {
   return (
     <section id="projects" className="relative py-32 px-6 md:px-12 section-dimming-2 z-20 overflow-hidden section-divider">
 
-      <div className="max-w-7xl mx-auto">
+      {/* Very subtle minimal water droplets (bahut hi kam chalte hue) */}
+      <GlassWallRainDrip density="minimal" />
+
+      <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Send, Copy, Check, Github, Linkedin, Twitter, MessageSquare, Sparkles, Globe } from 'lucide-react';
+import GlassWallRainDrip from './GlassWallRainDrip';
 
 export default function Contact() {
   const [copied, setCopied] = useState(false);
@@ -31,7 +32,10 @@ export default function Contact() {
 
   return (
     <section id="contact" className="relative py-32 px-6 md:px-12 section-dimming-4 z-20 overflow-hidden section-divider">
-      
+
+      {/* Only static dew drops for bottom 2 sections (zero moving drops) */}
+      <GlassWallRainDrip density="static" />
+
       {/* Ambient background light */}
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-white/5 rounded-full blur-[160px] pointer-events-none"></div>
 
