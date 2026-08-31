@@ -15,9 +15,9 @@ export default function GlassWallRainDrip({ density = 'full' }) {
     const isStatic = density === 'static' || density === 'static-dew';
     const isMinimal = density === 'minimal';
 
-    const maxDrops = isStatic ? 0 : (isMinimal ? 6 : 40);
-    const spawnFreq = isMinimal ? 36 : 9;
-    const dewDivisor = isStatic ? 75 : (isMinimal ? 45 : 22);
+    const maxDrops = isStatic ? 0 : (isMinimal ? 12 : 100);
+    const spawnFreq = isMinimal ? 18 : 3;
+    const dewDivisor = isStatic ? 75 : (isMinimal ? 35 : 14);
 
     // Offscreen canvas for pre-rendered static dew drops
     const dewCanvas = document.createElement('canvas');
@@ -114,7 +114,7 @@ export default function GlassWallRainDrip({ density = 'full' }) {
       // Fast 1-call blit for static dew drops layer
       ctx.drawImage(dewCanvas, 0, 0);
 
-      // Spawn subtle raindrops inside section bounds
+      // Spawn raindrops inside section bounds
       if (frameCount % spawnFreq === 0) {
         const impactX = Math.random() * canvas.width;
         const impactY = Math.random() * (canvas.height * 0.3);
@@ -124,18 +124,18 @@ export default function GlassWallRainDrip({ density = 'full' }) {
             x: impactX,
             y: impactY,
             r: 2,
-            maxR: Math.random() * 12 + 8,
-            opacity: 0.75
+            maxR: Math.random() * 16 + 10,
+            opacity: 0.85
           });
         }
 
         tricklingDrops.push({
           x: impactX,
           y: impactY,
-          r: isMinimal ? Math.random() * 3 + 2 : Math.random() * 4 + 2.5,
-          vy: isMinimal ? Math.random() * 1.4 + 0.8 : Math.random() * 2.0 + 1.2,
+          r: isMinimal ? Math.random() * 3.5 + 2.5 : Math.random() * 5.5 + 3.5, // Larger water droplets
+          vy: isMinimal ? Math.random() * 1.5 + 0.8 : Math.random() * 2.2 + 1.2, // Natural trickle speed
           trail: [],
-          pauseTimer: Math.floor(Math.random() * 35 + 10)
+          pauseTimer: Math.floor(Math.random() * 25 + 8)
         });
 
         if (tricklingDrops.length > maxDrops) {

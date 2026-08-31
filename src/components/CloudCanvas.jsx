@@ -195,18 +195,22 @@ export default function CloudCanvas({ onScrollProgress }) {
     scene.add(shadowLight);
 
     // ----------------------------------------------------
-    // SUPERCHARGED HIGH-POWER LIGHTNING (BIJLI) ENGINE
+    // SUPERCHARGED OMNIDIRECTIONAL LIGHTNING ENGINE
     // ----------------------------------------------------
-    const lightningLight = new THREE.PointLight(0xe0f2fe, 0, 6000);
-    lightningLight.position.set(0, 1000, 300);
-    scene.add(lightningLight);
+    const lightningLightLeft = new THREE.PointLight(0xf0f9ff, 0, 7000);
+    lightningLightLeft.position.set(-900, 1000, 300);
+    scene.add(lightningLightLeft);
 
-    const lightningFlashLight = new THREE.DirectionalLight(0xf0f9ff, 0);
+    const lightningLightRight = new THREE.PointLight(0xf0f9ff, 0, 7000);
+    lightningLightRight.position.set(900, 1000, 300);
+    scene.add(lightningLightRight);
+
+    const lightningFlashLight = new THREE.DirectionalLight(0xffffff, 0);
     lightningFlashLight.position.set(0, 1200, 600);
     scene.add(lightningFlashLight);
 
-    // Dual Lightning Bolt Geometry (White Core + Glowing Electric Cyan Shell)
-    const maxBoltSegments = 72;
+    // Dual Lightning Bolt Geometry (White Core + Soft Electric Ice-Blue Shell)
+    const maxBoltSegments = 144;
     const boltCorePositions = new Float32Array(maxBoltSegments * 6);
     const boltGlowPositions = new Float32Array(maxBoltSegments * 6);
 
@@ -225,190 +229,237 @@ export default function CloudCanvas({ onScrollProgress }) {
       depthWrite: false
     });
     const boltCoreLine = new THREE.LineSegments(boltCoreGeo, boltCoreMat);
+    boltCoreLine.frustumCulled = false;
     scene.add(boltCoreLine);
 
-    // Cyan Outer Electric Aura Shell
+    // Mixed White & Ice-Blue Outer Shell
     const boltGlowMat = new THREE.LineBasicMaterial({
-      color: 0x38bdf8,
+      color: 0xbae6fd,
       transparent: true,
       opacity: 0,
       blending: THREE.AdditiveBlending,
       depthWrite: false
     });
     const boltGlowLine = new THREE.LineSegments(boltGlowGeo, boltGlowMat);
+    boltGlowLine.frustumCulled = false;
     scene.add(boltGlowLine);
 
     let isFlashing = false;
     let flashIntensity = 0;
     let stormModeActive = true;
 
-    // Generate heavy multi-branched electric lightning path right in front of camera
-    const generateLightningPath = () => {
-      const startX = (Math.random() - 0.5) * 1000;
-      const startY = camera.position.y + 600;
-      const startZ = camera.position.z - 250;
-
-      let curX = startX;
-      let curY = startY;
-      let curZ = startZ;
-
+    // Generate dynamic multi-branched electric lightning paths with 3D Z-depth layering (front, mid, behind clouds)
+    const generateLightningPath = (targetMode) => {
       const coreArray = boltCoreGeo.attributes.position.array;
       const glowArray = boltGlowGeo.attributes.position.array;
 
-      const segCount = 24;
+      let mode = targetMode;
+      if (!mode) {
+        const rand = Math.random();
+        // 85% single side bolt (left/right/center), 15% dual bolt for cleaner sleek lines
+        mode = rand < 0.40 ? 'left' : (rand < 0.80 ? 'right' : (rand < 0.90 ? 'center' : 'both'));
+      }
+
+      let boltStartXs = [];
+      if (mode === 'left') {
+        boltStartXs = [-130 + (Math.random() - 0.5) * 90];
+      } else if (mode === 'right') {
+        boltStartXs = [130 + (Math.random() - 0.5) * 90];
+      } else if (mode === 'center') {
+        boltStartXs = [(Math.random() - 0.5) * 80];
+      } else {
+        // 'both' -> dual strike across left and right
+        boltStartXs = [
+          130 + (Math.random() - 0.5) * 90,
+          -130 + (Math.random() - 0.5) * 90
+        ];
+      }
+
+      // Clear position arrays so inactive bolt slots don't render
+      coreArray.fill(0);
+      glowArray.fill(0);
+
+      const segCount = 20; // Sleeker segment count for clean high-definition lines
       const stepY = 1300 / segCount;
+      let lastBoltZ = camera.position.z - 250;
 
-      for (let i = 0; i < segCount; i++) {
-        const nextX = curX + (Math.random() - 0.5) * 240;
-        const nextY = curY - stepY;
-        const nextZ = curZ + (Math.random() - 0.5) * 140;
-
-        // Core Trunk (Thick 3D jittered stroke bundle)
-        const coreIdx = (i * 3) * 6;
-        coreArray[coreIdx + 0] = curX;
-        coreArray[coreIdx + 1] = curY;
-        coreArray[coreIdx + 2] = curZ;
-        coreArray[coreIdx + 3] = nextX;
-        coreArray[coreIdx + 4] = nextY;
-        coreArray[coreIdx + 5] = nextZ;
-
-        coreArray[coreIdx + 6] = curX + (Math.random() - 0.5) * 8;
-        coreArray[coreIdx + 7] = curY;
-        coreArray[coreIdx + 8] = curZ + (Math.random() - 0.5) * 8;
-        coreArray[coreIdx + 9] = nextX + (Math.random() - 0.5) * 8;
-        coreArray[coreIdx + 10] = nextY;
-        coreArray[coreIdx + 11] = nextZ + (Math.random() - 0.5) * 8;
-
-        // Glow Shell (Expanded 3D aura stroke bundle)
-        const glowIdx = (i * 3) * 6;
-        glowArray[glowIdx + 0] = curX + (Math.random() - 0.5) * 20;
-        glowArray[glowIdx + 1] = curY;
-        glowArray[glowIdx + 2] = curZ + (Math.random() - 0.5) * 20;
-        glowArray[glowIdx + 3] = nextX + (Math.random() - 0.5) * 20;
-        glowArray[glowIdx + 4] = nextY;
-        glowArray[glowIdx + 5] = nextZ + (Math.random() - 0.5) * 20;
-
-        glowArray[glowIdx + 6] = curX + (Math.random() - 0.5) * 35;
-        glowArray[glowIdx + 7] = curY;
-        glowArray[glowIdx + 8] = curZ + (Math.random() - 0.5) * 35;
-        glowArray[glowIdx + 9] = nextX + (Math.random() - 0.5) * 35;
-        glowArray[glowIdx + 10] = nextY;
-        glowArray[glowIdx + 11] = nextZ + (Math.random() - 0.5) * 35;
-
-        // Branching Thunderbolt Forks
-        if (i > 3 && i < 20 && Math.random() > 0.3) {
-          const branchX = nextX + (Math.random() - 0.5) * 320;
-          const branchY = nextY - stepY * 0.8;
-          const branchZ = nextZ + (Math.random() - 0.5) * 180;
-
-          coreArray[coreIdx + 12] = nextX;
-          coreArray[coreIdx + 13] = nextY;
-          coreArray[coreIdx + 14] = nextZ;
-          coreArray[coreIdx + 15] = branchX;
-          coreArray[coreIdx + 16] = branchY;
-          coreArray[coreIdx + 17] = branchZ;
-
-          glowArray[glowIdx + 12] = nextX;
-          glowArray[glowIdx + 13] = nextY;
-          glowArray[glowIdx + 14] = nextZ;
-          glowArray[glowIdx + 15] = branchX + 20;
-          glowArray[glowIdx + 16] = branchY;
-          glowArray[glowIdx + 17] = branchZ + 20;
+      boltStartXs.forEach((startX, boltIdx) => {
+        const depthChoice = Math.random();
+        let depthOffset = -250;
+        if (depthChoice < 0.28) {
+          depthOffset = -180; // In front of main clouds
+        } else if (depthChoice < 0.58) {
+          depthOffset = -600; // Inside middle cloud layer
+        } else if (depthChoice < 0.82) {
+          depthOffset = -1200; // Behind clouds (backlit cloud flash)
         } else {
-          coreArray[coreIdx + 12] = nextX;
-          coreArray[coreIdx + 13] = nextY;
-          coreArray[coreIdx + 14] = nextZ;
-          coreArray[coreIdx + 15] = nextX;
-          coreArray[coreIdx + 16] = nextY;
-          coreArray[coreIdx + 17] = nextZ;
-
-          glowArray[glowIdx + 12] = nextX;
-          glowArray[glowIdx + 13] = nextY;
-          glowArray[glowIdx + 14] = nextZ;
-          glowArray[glowIdx + 15] = nextX;
-          glowArray[glowIdx + 16] = nextY;
-          glowArray[glowIdx + 17] = nextZ;
+          depthOffset = -1800; // Deep background atmosphere
         }
 
-        curX = nextX;
-        curY = nextY;
-        curZ = nextZ;
-      }
+        // Scale X & Y by perspective distance from camera (camera Z ~800)
+        const distFromCam = Math.abs(depthOffset);
+        const scaleFactor = Math.min(3.2, distFromCam / 250);
+
+        let curX = startX * scaleFactor;
+        let curY = camera.position.y + 600;
+        let curZ = camera.position.z + depthOffset;
+        lastBoltZ = curZ;
+
+        const segmentOffset = boltIdx * 72; // 72 line segments per bolt slot
+
+        for (let i = 0; i < segCount; i++) {
+          const nextX = curX + (Math.random() - 0.5) * (90 * scaleFactor);
+          const nextY = curY - stepY;
+          const nextZ = curZ + (Math.random() - 0.5) * (60 * scaleFactor);
+
+          // Core Trunk Line 1 (Sleek single primary stroke)
+          const coreIdx = (segmentOffset + i * 3) * 6;
+          coreArray[coreIdx + 0] = curX;
+          coreArray[coreIdx + 1] = curY;
+          coreArray[coreIdx + 2] = curZ;
+          coreArray[coreIdx + 3] = nextX;
+          coreArray[coreIdx + 4] = nextY;
+          coreArray[coreIdx + 5] = nextZ;
+
+          // Core Trunk Line 2 (Clean parallel connection)
+          coreArray[coreIdx + 6] = curX;
+          coreArray[coreIdx + 7] = curY;
+          coreArray[coreIdx + 8] = curZ;
+          coreArray[coreIdx + 9] = nextX;
+          coreArray[coreIdx + 10] = nextY;
+          coreArray[coreIdx + 11] = nextZ;
+
+          // Glow Shell (Clean soft aura stroke)
+          const glowIdx = (segmentOffset + i * 3) * 6;
+          glowArray[glowIdx + 0] = curX;
+          glowArray[glowIdx + 1] = curY;
+          glowArray[glowIdx + 2] = curZ;
+          glowArray[glowIdx + 3] = nextX;
+          glowArray[glowIdx + 4] = nextY;
+          glowArray[glowIdx + 5] = nextZ;
+
+          glowArray[glowIdx + 6] = curX + (Math.random() - 0.5) * (14 * scaleFactor);
+          glowArray[glowIdx + 7] = curY;
+          glowArray[glowIdx + 8] = curZ + (Math.random() - 0.5) * (14 * scaleFactor);
+          glowArray[glowIdx + 9] = nextX + (Math.random() - 0.5) * (14 * scaleFactor);
+          glowArray[glowIdx + 10] = nextY;
+          glowArray[glowIdx + 11] = nextZ + (Math.random() - 0.5) * (14 * scaleFactor);
+
+          // Branching Thunderbolt Forks (Reduced to ~18% chance for clean minimal lines)
+          if (i > 4 && i < 16 && Math.random() > 0.82) {
+            const branchDir = startX > 0 ? 1 : -1;
+            const branchX = nextX + branchDir * (Math.random() * 100 + 25) * scaleFactor;
+            const branchY = nextY - stepY * 0.7;
+            const branchZ = nextZ + (Math.random() - 0.5) * (80 * scaleFactor);
+
+            coreArray[coreIdx + 12] = nextX;
+            coreArray[coreIdx + 13] = nextY;
+            coreArray[coreIdx + 14] = nextZ;
+            coreArray[coreIdx + 15] = branchX;
+            coreArray[coreIdx + 16] = branchY;
+            coreArray[coreIdx + 17] = branchZ;
+
+            glowArray[glowIdx + 12] = nextX;
+            glowArray[glowIdx + 13] = nextY;
+            glowArray[glowIdx + 14] = nextZ;
+            glowArray[glowIdx + 15] = branchX + branchDir * 10 * scaleFactor;
+            glowArray[glowIdx + 16] = branchY;
+            glowArray[glowIdx + 17] = branchZ + 10 * scaleFactor;
+          } else {
+            coreArray[coreIdx + 12] = nextX;
+            coreArray[coreIdx + 13] = nextY;
+            coreArray[coreIdx + 14] = nextZ;
+            coreArray[coreIdx + 15] = nextX;
+            coreArray[coreIdx + 16] = nextY;
+            coreArray[coreIdx + 17] = nextZ;
+
+            glowArray[glowIdx + 12] = nextX;
+            glowArray[glowIdx + 13] = nextY;
+            glowArray[glowIdx + 14] = nextZ;
+            glowArray[glowIdx + 15] = nextX;
+            glowArray[glowIdx + 16] = nextY;
+            glowArray[glowIdx + 17] = nextZ;
+          }
+
+          curX = nextX;
+          curY = nextY;
+          curZ = nextZ;
+        }
+      });
 
       boltCoreGeo.attributes.position.needsUpdate = true;
       boltGlowGeo.attributes.position.needsUpdate = true;
-      lightningLight.position.set(startX, camera.position.y + 300, startZ);
-      lightningFlashLight.position.set(0, camera.position.y + 400, camera.position.z);
+      lightningLightLeft.position.set(-350, camera.position.y + 350, lastBoltZ);
+      lightningLightRight.position.set(350, camera.position.y + 350, lastBoltZ);
+      lightningFlashLight.position.set(0, camera.position.y + 500, camera.position.z + 100);
     };
 
-    // HIGH-POWER TRIPLE-BURST LIGHTNING STRIKE SEQUENCE
+    // DYNAMIC STAGGERED MULTI-BURST LIGHTNING STRIKE SEQUENCE
     const triggerLightningStrike = () => {
       if (!stormModeActive) return;
-      generateLightningPath();
-      isFlashing = true;
 
-      // Dispatch event to render sharp electric lightning bolt lines on overlay
+      // Pick staggered sequence of locations (e.g. Left -> Right -> Center)
+      const sidesPool = ['left', 'right', 'center'];
+      const firstSide = sidesPool[Math.floor(Math.random() * sidesPool.length)];
+      const secondSide = firstSide === 'left' ? 'right' : (firstSide === 'right' ? 'left' : (Math.random() > 0.5 ? 'left' : 'right'));
+      const finalSide = Math.random() < 0.2 ? 'both' : (Math.random() > 0.5 ? 'left' : 'right');
+
+      // Strike 1 (Initial light burst + sleek bolt line)
+      generateLightningPath(firstSide);
+      isFlashing = true;
+      flashIntensity = 40.0;
+      boltCoreMat.opacity = 0.85;
+      boltGlowMat.opacity = 0.65;
+
       window.dispatchEvent(new CustomEvent('trigger-lightning-strike'));
 
-      // Trigger Screen Flash Overlay
       if (flashOverlayRef.current) {
-        flashOverlayRef.current.style.opacity = '0.55';
+        flashOverlayRef.current.style.opacity = '0.45';
         setTimeout(() => {
           if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0.15';
-        }, 50);
+        }, 40);
       }
 
-      // Strike 1 (Sudden Massive Shockwave: 40 Power)
-      flashIntensity = 40.0;
-      boltCoreMat.opacity = 1.0;
-      boltGlowMat.opacity = 0.9;
-
+      // Strike 2 (Staggered 70ms later on opposite side!)
       setTimeout(() => {
-        flashIntensity = 8.0;
-        boltCoreMat.opacity = 0.3;
-        boltGlowMat.opacity = 0.3;
+        generateLightningPath(secondSide);
+        flashIntensity = 32.0;
+        boltCoreMat.opacity = 0.75;
+        boltGlowMat.opacity = 0.55;
 
-        // Strike 2 (Secondary Pre-Shock Burst: 25 Power)
+        if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0.40';
+
+        // Strike 3 (Climax light burst 60ms later!)
         setTimeout(() => {
-          generateLightningPath();
-          flashIntensity = 25.0;
-          boltCoreMat.opacity = 0.8;
-          boltGlowMat.opacity = 0.8;
+          generateLightningPath(finalSide);
+          flashIntensity = 65.0;
+          boltCoreMat.opacity = 0.90;
+          boltGlowMat.opacity = 0.70;
 
-          if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0.4';
+          if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0.70';
 
-          // Strike 3 (SUPER POWER MAIN THUNDERBOLT BURST: 65.0 MAX POWER!)
           setTimeout(() => {
-            generateLightningPath();
-            flashIntensity = 65.0;
-            boltCoreMat.opacity = 1.0;
-            boltGlowMat.opacity = 1.0;
+            if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0.18';
+            const fadeOut = setInterval(() => {
+              flashIntensity *= 0.62;
+              boltCoreMat.opacity *= 0.62;
+              boltGlowMat.opacity *= 0.62;
 
-            if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0.75';
+              if (flashOverlayRef.current) {
+                const curOp = parseFloat(flashOverlayRef.current.style.opacity || '0');
+                flashOverlayRef.current.style.opacity = Math.max(0, curOp * 0.6).toString();
+              }
 
-            setTimeout(() => {
-              if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0.2';
-              const fadeOut = setInterval(() => {
-                flashIntensity *= 0.62;
-                boltCoreMat.opacity *= 0.62;
-                boltGlowMat.opacity *= 0.62;
-
-                if (flashOverlayRef.current) {
-                  const curOp = parseFloat(flashOverlayRef.current.style.opacity || '0');
-                  flashOverlayRef.current.style.opacity = Math.max(0, curOp * 0.6).toString();
-                }
-
-                if (flashIntensity < 0.2) {
-                  flashIntensity = 0;
-                  boltCoreMat.opacity = 0;
-                  boltGlowMat.opacity = 0;
-                  isFlashing = false;
-                  if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0';
-                  clearInterval(fadeOut);
-                }
-              }, 30);
-            }, 80);
-          }, 40);
+              if (flashIntensity < 0.2) {
+                flashIntensity = 0;
+                boltCoreMat.opacity = 0;
+                boltGlowMat.opacity = 0;
+                isFlashing = false;
+                if (flashOverlayRef.current) flashOverlayRef.current.style.opacity = '0';
+                clearInterval(fadeOut);
+              }
+            }, 30);
+          }, 80);
         }, 60);
       }, 70);
     };
@@ -567,13 +618,14 @@ export default function CloudCanvas({ onScrollProgress }) {
 
 
       // ----------------------------------------------------
-      // HIGH-POWER LIGHTNING FLASH LIGHTING
+      // HIGH-POWER LIGHTNING FLASH LIGHTING (BALANCED OMNIDIRECTIONAL)
       // ----------------------------------------------------
-      lightningLight.intensity = flashIntensity * 4.5;
+      lightningLightLeft.intensity = flashIntensity * 3.5;
+      lightningLightRight.intensity = flashIntensity * 3.5;
       lightningFlashLight.intensity = flashIntensity * 3.5;
 
       if (isFlashing) {
-        scene.fog.color.setHex(flashIntensity > 40 ? 0x38bdf8 : 0x1e293b);
+        scene.fog.color.setHex(flashIntensity > 40 ? 0xbae6fd : 0x1e293b);
         ambientLight.intensity = 0.8 + flashIntensity * 0.45;
       } else {
         scene.fog.color.setHex(0x0c101c);
@@ -636,7 +688,7 @@ export default function CloudCanvas({ onScrollProgress }) {
       {/* Lightning Screen Flash Burst Overlay */}
       <div
         ref={flashOverlayRef}
-        className="fixed inset-0 z-15 pointer-events-none bg-sky-200/40 mix-blend-screen transition-opacity duration-75 ease-out"
+        className="fixed inset-0 z-15 pointer-events-none bg-sky-50/30 mix-blend-screen transition-opacity duration-75 ease-out"
         style={{ opacity: 0 }}
       />
     </>
