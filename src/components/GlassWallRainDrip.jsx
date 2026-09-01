@@ -422,13 +422,6 @@ export default function GlassWallRainDrip({ density = 'full' }) {
         }
 
         let dropOpacity = 0.95;
-        const entryFadeDist = 60;
-        const exitFadeDist = 60;
-        if (drop.y < entryFadeDist) {
-          dropOpacity = Math.max(0, Math.min(0.95, (drop.y + drop.length) / (entryFadeDist + drop.length) * 0.95));
-        } else if (drop.y > h - exitFadeDist) {
-          dropOpacity = Math.max(0, Math.min(0.95, (h + drop.length + 40 - drop.y) / (exitFadeDist + drop.length + 40) * 0.95));
-        }
 
         if (dropOpacity > 0.02 && drop.y + drop.length > -10 && drop.y - drop.length < h + 50) {
           if (drop.trail.length > 1) {

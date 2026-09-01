@@ -11,53 +11,38 @@ export default function Hero({ scrollProgress }) {
   useEffect(() => {
     const updateRects = () => {
       const rects = [];
-      // 1. Hero Title letters
+      // 1. BADAL VARSHNEY Name Title Letters (Adjust for 152px font ascender offset)
       if (letterRefs.current && letterRefs.current.length > 0) {
         letterRefs.current.forEach(el => {
           if (el) {
             const r = el.getBoundingClientRect();
             if (r.bottom > -50 && r.top < window.innerHeight + 50) {
-              rects.push(r);
+              // Font ascender offset: adjusted to 20% for exact top edge text contact
+              const fontTopOffset = r.height > 60 ? r.height * 0.20 : 0;
+              rects.push({
+                left: r.left,
+                right: r.right,
+                top: r.top + fontTopOffset,
+                bottom: r.bottom
+              });
             }
           }
         });
       }
-      // 2. Hero CTA Buttons
+
+      // 2. The 2 Hero Action CTA Buttons below the name (Exact top border)
       if (button1Ref.current) {
         const r = button1Ref.current.getBoundingClientRect();
-        if (r.bottom > -50 && r.top < window.innerHeight + 50) rects.push(r);
+        if (r.bottom > -50 && r.top < window.innerHeight + 50) {
+          rects.push({ left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+        }
       }
       if (button2Ref.current) {
         const r = button2Ref.current.getBoundingClientRect();
-        if (r.bottom > -50 && r.top < window.innerHeight + 50) rects.push(r);
+        if (r.bottom > -50 && r.top < window.innerHeight + 50) {
+          rects.push({ left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+        }
       }
-
-      // 3. Horizontal Section Divider Lines (including About section top line)
-      const dividers = document.querySelectorAll('.section-divider, #about');
-      dividers.forEach(el => {
-        if (el) {
-          const r = el.getBoundingClientRect();
-          if (r.top > -50 && r.top < window.innerHeight + 50) {
-            rects.push({
-              left: 0,
-              right: window.innerWidth,
-              top: r.top,
-              bottom: r.top + 2
-            });
-          }
-        }
-      });
-
-      // 4. Badges and specific target elements across sections
-      const targetElements = document.querySelectorAll('.rain-target-element');
-      targetElements.forEach(el => {
-        if (el) {
-          const r = el.getBoundingClientRect();
-          if (r.bottom > -50 && r.top < window.innerHeight + 50) {
-            rects.push(r);
-          }
-        }
-      });
 
       setLetterRects(rects);
     };
