@@ -13,7 +13,11 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, .font-display {
+h1,
+h2,
+h3,
+h4,
+.font-display {
   font-family: 'Syne', sans-serif;
 }
 
@@ -65,30 +69,44 @@ h1, h2, h3, h4, .font-display {
 
 .grid-bg {
   background-size: 40px 40px;
-  background-image: 
+  background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
 
-/* Continuous Section Dimming Styles (Transparent to reveal 3D clouds & rain) */
+/* Progressive Section Dimming Arc (Seamless Boundary Color Matching + Crisp blur(4px)) */
 .section-dimming-1 {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(12, 16, 26, 0.3) 30%, rgba(10, 14, 24, 0.45) 100%);
+  background: linear-gradient(180deg, transparent 0%, rgba(14, 18, 28, 0.15) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .section-dimming-2 {
-  background: linear-gradient(180deg, rgba(10, 14, 24, 0.45) 0%, rgba(8, 12, 20, 0.55) 50%, rgba(6, 10, 16, 0.65) 100%);
+  background: linear-gradient(180deg, rgba(14, 18, 28, 0.15) 0%, rgba(10, 14, 22, 0.38) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .section-dimming-3 {
-  background: linear-gradient(180deg, rgba(6, 10, 16, 0.65) 0%, rgba(5, 8, 14, 0.75) 50%, rgba(4, 6, 10, 0.82) 100%);
+  background: linear-gradient(180deg, rgba(10, 14, 22, 0.38) 0%, rgba(8, 11, 18, 0.60) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .section-dimming-4 {
-  background: linear-gradient(180deg, rgba(4, 6, 10, 0.82) 0%, rgba(2, 4, 8, 0.9) 50%, rgba(0, 0, 0, 0.95) 100%);
+  background: linear-gradient(180deg, rgba(8, 11, 18, 0.60) 0%, rgba(5, 7, 13, 0.78) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
-/* Smooth Soft Divider Line */
+.section-dimming-5 {
+  background: linear-gradient(180deg, rgba(5, 7, 13, 0.78) 0%, rgba(3, 4, 8, 0.90) 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Zero Border Seams across all sections */
 .section-divider {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: none !important;
+  border-bottom: none !important;
 }
-

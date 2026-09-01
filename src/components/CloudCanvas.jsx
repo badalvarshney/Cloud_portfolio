@@ -603,6 +603,7 @@ export default function CloudCanvas({ onScrollProgress }) {
     const animate = () => {
       if (!isTabActive) return;
       animationFrameId = requestAnimationFrame(animate);
+
       const elapsedTime = clock.getElapsedTime();
 
       mouseX += (targetMouseX - mouseX) * 0.05;

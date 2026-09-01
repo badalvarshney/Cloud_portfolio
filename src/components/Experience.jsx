@@ -42,13 +42,12 @@ const EXPERIENCES = [
 
 function Experience() {
   return (
-    <section id="experience" className="relative py-32 px-6 md:px-12 section-dimming-3 z-20 overflow-hidden section-divider">
-
-      {/* Only static dew drops for bottom 2 sections (zero moving drops) */}
-      <GlassWallRainDrip density="static" />
+    <section id="experience" className="relative py-32 px-6 md:px-12 section-dimming-4 z-20 overflow-hidden section-divider">
+      {/* Minimal sliding water droplets */}
+      <GlassWallRainDrip density="minimal" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
@@ -71,9 +70,8 @@ function Experience() {
           {EXPERIENCES.map((item, idx) => (
             <div
               key={idx}
-              className={`relative flex flex-col md:flex-row items-center gap-8 ${
-                idx % 2 === 0 ? 'md:flex-row-reverse' : ''
-              }`}
+              className={`relative flex flex-col md:flex-row items-center gap-8 ${idx % 2 === 0 ? 'md:flex-row-reverse' : ''
+                }`}
             >
               {/* Timeline Center Dot */}
               <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-black border-2 border-white flex items-center justify-center z-10 shadow-lg shadow-white/20">

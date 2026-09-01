@@ -34,15 +34,15 @@ export default function About({ scrollProgress = 1 }) {
       <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none"></div>
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-white/5 rounded-full blur-[140px] pointer-events-none"></div>
 
-      {/* Glass Wall Rain Drip Engine (Mounted directly inside About section background) */}
-      <GlassWallRainDrip scrollProgress={scrollProgress} />
+      {/* Glass Wall Rain Drip Engine */}
+      <GlassWallRainDrip density="full" />
 
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-zinc-400 mb-3 bg-zinc-900 border border-white/10 px-3 py-1 rounded-full">
+            <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-zinc-400 mb-3 bg-zinc-900 border border-white/10 px-3 py-1 rounded-full rain-target-element">
               <Compass className="w-3.5 h-3.5 text-white" />
               <span>01 // About Badal Varshney</span>
             </div>

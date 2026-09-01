@@ -40,7 +40,7 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
         baseLength: Math.random() * 26 + 18,
         width: Math.random() * 1.6 + 0.9,
         opacity: Math.random() * 0.45 + 0.45,
-        hasSplashed: false
+        lastSplashedY: -999
       });
     }
 
@@ -125,8 +125,8 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
         drop.x += currentVx * speedFactor;
         drop.y += currentVy * speedFactor;
 
-        // Collision detection ONLY when BADAL VARSHNEY text is visible on screen
-        if (currentTextVisible && !drop.hasSplashed && currentRects && currentRects.length > 0) {
+        // Collision detection for text and buttons on screen
+        if (currentTextVisible && currentRects && currentRects.length > 0) {
           for (let r = 0; r < currentRects.length; r++) {
             const rect = currentRects[r];
             if (!rect) continue;
@@ -136,13 +136,14 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
             const relTop = rect.top;
 
             if (
+              Math.abs(relTop - drop.lastSplashedY) > 20 &&
               drop.x >= relLeft - 8 &&
               drop.x <= relRight + 8 &&
-              prevY <= relTop + 8 &&
-              drop.y >= relTop - 4
+              prevY <= relTop + 10 &&
+              drop.y >= relTop - 6
             ) {
               spawnLetterSplash(drop.x, relTop, smoothStorm);
-              drop.hasSplashed = true;
+              drop.lastSplashedY = relTop;
               break;
             }
           }
@@ -152,7 +153,7 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
         if (drop.y > canvas.height + 25) {
           drop.y = -Math.random() * 120 - 20;
           drop.x = Math.random() * (canvas.width + 200) - 100;
-          drop.hasSplashed = false;
+          drop.lastSplashedY = -999;
           continue;
         }
 
@@ -236,7 +237,7 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
   }, []); // Run ONLY ONCE on mount -> Never re-initializes on scroll!
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-15 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-25 overflow-hidden">
       <canvas ref={canvasRef} className="w-full h-full block pointer-events-none" />
     </div>
   );

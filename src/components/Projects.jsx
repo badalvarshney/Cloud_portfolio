@@ -65,9 +65,8 @@ function Projects() {
 
   return (
     <section id="projects" className="relative py-32 px-6 md:px-12 section-dimming-2 z-20 overflow-hidden section-divider">
-
-      {/* Very subtle minimal water droplets (bahut hi kam chalte hue) */}
-      <GlassWallRainDrip density="minimal" />
+      {/* Moderate sliding water droplets */}
+      <GlassWallRainDrip density="moderate" />
 
       <div className="max-w-7xl mx-auto relative z-10">
 
@@ -90,8 +89,8 @@ function Projects() {
                 key={filter}
                 onClick={() => setActiveFilter(filter)}
                 className={`px-4 py-2 rounded-full text-xs font-mono tracking-wider transition-all border ${activeFilter === filter
-                    ? 'bg-white text-black border-white font-bold'
-                    : 'bg-zinc-900/80 text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
+                  ? 'bg-white text-black border-white font-bold'
+                  : 'bg-zinc-900/80 text-zinc-400 border-white/10 hover:text-white hover:border-white/30'
                   }`}
               >
                 {filter}

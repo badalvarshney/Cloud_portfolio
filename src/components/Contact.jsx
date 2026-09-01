@@ -31,18 +31,17 @@ function Contact() {
   };
 
   return (
-    <section id="contact" className="relative py-32 px-6 md:px-12 section-dimming-4 z-20 overflow-hidden section-divider">
-
-      {/* Only static dew drops for bottom 2 sections (zero moving drops) */}
-      <GlassWallRainDrip density="static" />
+    <section id="contact" className="relative py-32 px-6 md:px-12 section-dimming-5 z-20 overflow-hidden section-divider">
+      {/* Micro sliding drops (1 or 2 drops) */}
+      <GlassWallRainDrip density="micro" />
 
       {/* Ambient background light */}
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-white/5 rounded-full blur-[160px] pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-          
+
           {/* Left Column: Direct Info */}
           <div className="space-y-8">
             <div>
@@ -124,7 +123,7 @@ function Contact() {
 
           {/* Right Column: Contact Form */}
           <div className="glass-panel p-8 sm:p-10 rounded-3xl border border-white/15 shadow-2xl relative">
-            
+
             {submitted ? (
               <div className="py-16 text-center space-y-4 animate-in fade-in zoom-in duration-300">
                 <div className="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center mx-auto text-2xl font-bold">

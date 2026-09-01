@@ -4,16 +4,62 @@ import TextRainCanvas from './TextRainCanvas';
 export default function Hero({ scrollProgress }) {
   const titleRef = useRef(null);
   const letterRefs = useRef([]);
+  const button1Ref = useRef(null);
+  const button2Ref = useRef(null);
   const [letterRects, setLetterRects] = useState([]);
 
   useEffect(() => {
     const updateRects = () => {
+      const rects = [];
+      // 1. Hero Title letters
       if (letterRefs.current && letterRefs.current.length > 0) {
-        const rects = letterRefs.current
-          .map(el => (el ? el.getBoundingClientRect() : null))
-          .filter(Boolean);
-        setLetterRects(rects);
+        letterRefs.current.forEach(el => {
+          if (el) {
+            const r = el.getBoundingClientRect();
+            if (r.bottom > -50 && r.top < window.innerHeight + 50) {
+              rects.push(r);
+            }
+          }
+        });
       }
+      // 2. Hero CTA Buttons
+      if (button1Ref.current) {
+        const r = button1Ref.current.getBoundingClientRect();
+        if (r.bottom > -50 && r.top < window.innerHeight + 50) rects.push(r);
+      }
+      if (button2Ref.current) {
+        const r = button2Ref.current.getBoundingClientRect();
+        if (r.bottom > -50 && r.top < window.innerHeight + 50) rects.push(r);
+      }
+
+      // 3. Horizontal Section Divider Lines (including About section top line)
+      const dividers = document.querySelectorAll('.section-divider, #about');
+      dividers.forEach(el => {
+        if (el) {
+          const r = el.getBoundingClientRect();
+          if (r.top > -50 && r.top < window.innerHeight + 50) {
+            rects.push({
+              left: 0,
+              right: window.innerWidth,
+              top: r.top,
+              bottom: r.top + 2
+            });
+          }
+        }
+      });
+
+      // 4. Badges and specific target elements across sections
+      const targetElements = document.querySelectorAll('.rain-target-element');
+      targetElements.forEach(el => {
+        if (el) {
+          const r = el.getBoundingClientRect();
+          if (r.bottom > -50 && r.top < window.innerHeight + 50) {
+            rects.push(r);
+          }
+        }
+      });
+
+      setLetterRects(rects);
     };
 
     updateRects();
@@ -135,7 +181,7 @@ export default function Hero({ scrollProgress }) {
         {hasRainStarted && (
           <TextRainCanvas
             letterRects={letterRects}
-            isTextVisible={heroOpacity > 0.35 && flythroughProgress < 0.4}
+            isTextVisible={hasRainStarted}
           />
         )}
 
@@ -272,12 +318,14 @@ export default function Hero({ scrollProgress }) {
             }}
           >
             <a
+              ref={button1Ref}
               href="#projects"
               className="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 rounded-full bg-white text-black font-bold text-xs sm:text-sm uppercase tracking-widest hover:bg-zinc-200 transition-all hover:scale-105 shadow-2xl shadow-white/30 text-center"
             >
               Explore My Work
             </a>
             <a
+              ref={button2Ref}
               href="#contact"
               className="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 rounded-full glass-panel hover:bg-zinc-800 border border-white/30 text-white font-bold text-xs sm:text-sm uppercase tracking-widest transition-all hover:scale-105 text-center"
             >

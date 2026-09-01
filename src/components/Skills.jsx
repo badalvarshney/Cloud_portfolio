@@ -69,9 +69,8 @@ const TECH_CATEGORIES = [
 function Skills() {
   return (
     <section id="skills" className="relative py-32 px-6 md:px-12 section-dimming-3 z-20 overflow-hidden section-divider">
-
-      {/* Very subtle minimal water droplets (bahut hi kam chalte hue) */}
-      <GlassWallRainDrip density="minimal" />
+      {/* Low sliding water droplets */}
+      <GlassWallRainDrip density="low" />
 
       <div className="max-w-7xl mx-auto relative z-10">
 
