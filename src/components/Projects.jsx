@@ -104,10 +104,10 @@ function Projects() {
           {filteredProjects.map((project) => (
             <div
               key={project.id}
-              className="glass-panel rounded-3xl overflow-hidden glass-panel-hover group flex flex-col justify-between border border-white/15 relative"
+              className="glass-panel rounded-3xl overflow-hidden glass-panel-hover group flex flex-col justify-between border border-white/15 relative z-30"
             >
               {/* Thumbnail Container */}
-              <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-zinc-900">
+              <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-zinc-900 z-20">
                 <img
                   src={project.image}
                   alt={project.title}
@@ -134,8 +134,8 @@ function Projects() {
                 </div>
               </div>
 
-              {/* Card Details */}
-              <div className="p-8 flex flex-col justify-between flex-grow">
+              {/* Card Details (High Z-Index z-30 Layer - Never Disappears) */}
+              <div className="p-8 flex flex-col justify-between flex-grow relative z-30 ">
                 <div>
                   <div className="text-xs font-mono uppercase tracking-widest text-zinc-400 mb-2">
                     {project.category}

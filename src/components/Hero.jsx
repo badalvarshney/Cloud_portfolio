@@ -44,6 +44,20 @@ export default function Hero({ scrollProgress }) {
         }
       }
 
+      // 3. ONLY About Section Top Border Line (Rain drops splash on this line!)
+      const aboutEl = document.querySelector('#about');
+      if (aboutEl) {
+        const r = aboutEl.getBoundingClientRect();
+        if (r.top > -50 && r.top < window.innerHeight + 50) {
+          rects.push({
+            left: 0,
+            right: window.innerWidth,
+            top: r.top,
+            bottom: r.top + 2
+          });
+        }
+      }
+
       setLetterRects(rects);
     };
 
@@ -119,20 +133,20 @@ export default function Hero({ scrollProgress }) {
   let centerZoomProgress = 0; // 0 = start emergence, 1 = focused in center
   let flythroughProgress = 0; // 0 = at center focus, 1 = full hyper zoom flythrough
 
-  if (scrollProgress <= 0.38) {
+  if (scrollProgress <= 0.28) {
     heroOpacity = 0;
     centerZoomProgress = 0;
     flythroughProgress = 0;
-    heroBlur = 20;
-  } else if (scrollProgress > 0.38 && scrollProgress <= 0.62) {
-    // Stage 1: Emergence from deep center fog, zooming in to center stage (0.38 -> 0.62)
-    const p = (scrollProgress - 0.38) / 0.24;
+    heroBlur = 0;
+  } else if (scrollProgress > 0.28 && scrollProgress <= 0.58) {
+    // Stage 1: Reveal clearly as clouds part open (0.28 -> 0.58)
+    const p = (scrollProgress - 0.28) / 0.30;
     centerZoomProgress = p;
     flythroughProgress = 0;
     heroOpacity = p;
-    heroBlur = 20 * (1 - p);
-  } else if (scrollProgress > 0.62 && scrollProgress <= 0.76) {
-    // Stage 2: Sharp focal hold at screen center (0.62 -> 0.76)
+    heroBlur = 0;
+  } else if (scrollProgress > 0.58 && scrollProgress <= 0.76) {
+    // Stage 2: Sharp focal hold at screen center (0.58 -> 0.76)
     centerZoomProgress = 1;
     flythroughProgress = 0;
     heroOpacity = 1;
@@ -143,7 +157,7 @@ export default function Hero({ scrollProgress }) {
     const p = (scrollProgress - 0.76) / 0.14;
     flythroughProgress = p;
     heroOpacity = p > 0.6 ? Math.max(0, 1 - (p - 0.6) / 0.4) : 1;
-    heroBlur = p * 5;
+    heroBlur = 0;
   }
 
   // Base scale during emergence (Zooms OUT from giant 2.4x down to 1.0x focal center)
@@ -232,7 +246,6 @@ export default function Hero({ scrollProgress }) {
                 const ly = vec.y * flythroughProgress;
                 const lr = vec.r * flythroughProgress;
                 const ls = emergenceScale * Math.max(0.04, 1 - flythroughProgress * 0.94);
-                const lBlur = flythroughProgress * 12;
 
                 return (
                   <span
@@ -241,7 +254,6 @@ export default function Hero({ scrollProgress }) {
                     className="inline-block transition-transform duration-75 ease-out pointer-events-auto"
                     style={{
                       transform: `translate(${lx}vw, ${ly}vh) rotate(${lr}deg) scale(${ls})`,
-                      filter: `blur(${lBlur}px)`,
                       transformOrigin: 'center center'
                     }}
                   >
@@ -260,7 +272,6 @@ export default function Hero({ scrollProgress }) {
                 const ly = vec.y * flythroughProgress;
                 const lr = vec.r * flythroughProgress;
                 const ls = emergenceScale * Math.max(0.04, 1 - flythroughProgress * 0.94);
-                const lBlur = flythroughProgress * 12;
 
                 return (
                   <span
@@ -269,7 +280,6 @@ export default function Hero({ scrollProgress }) {
                     className="inline-block transition-transform duration-75 ease-out pointer-events-auto"
                     style={{
                       transform: `translate(${lx}vw, ${ly}vh) rotate(${lr}deg) scale(${ls})`,
-                      filter: `blur(${lBlur}px)`,
                       transformOrigin: 'center center'
                     }}
                   >
@@ -286,7 +296,6 @@ export default function Hero({ scrollProgress }) {
             style={{
               opacity: subContentOpacity,
               transform: `scale(${1 + flythroughProgress * 0.4})`,
-              filter: `blur(${flythroughProgress * 4}px)`,
               pointerEvents: subContentOpacity > 0.4 ? 'auto' : 'none'
             }}
           >

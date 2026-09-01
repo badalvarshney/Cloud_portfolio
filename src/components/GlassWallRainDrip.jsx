@@ -172,20 +172,20 @@ export default function GlassWallRainDrip({ density = 'full' }) {
       let beadDivisor = 28;
 
       if (density === 'full') {
-        dewDivisor = 750;
-        beadDivisor = 16;
+        dewDivisor = 320;   // 2.5x More Lifecycle Dew Drops
+        beadDivisor = 7;    // 2.3x More 3D Water Beads
       } else if (density === 'moderate') {
-        dewDivisor = 1000;
-        beadDivisor = 22;
+        dewDivisor = 550;
+        beadDivisor = 12;
       } else if (density === 'low') {
-        dewDivisor = 1400;
-        beadDivisor = 28;
+        dewDivisor = 900;
+        beadDivisor = 18;
       } else if (density === 'minimal') {
-        dewDivisor = 2000;
-        beadDivisor = 35;
+        dewDivisor = 1500;
+        beadDivisor = 25;
       } else if (density === 'micro') {
-        dewDivisor = 2800;
-        beadDivisor = 45;
+        dewDivisor = 2200;
+        beadDivisor = 35;
       }
 
       const dewCount = Math.floor((w * h) / dewDivisor);
@@ -195,7 +195,7 @@ export default function GlassWallRainDrip({ density = 'full' }) {
           x: Math.random() * w,
           y: Math.random() * h,
           r: r,
-          maxOpacity: Math.random() * 0.38 + 0.22,
+          maxOpacity: Math.random() * 0.45 + 0.30,
           opacity: 0,
           state: 'fadeIn',
           staggerTimer: Math.floor(Math.random() * 180),
@@ -209,9 +209,9 @@ export default function GlassWallRainDrip({ density = 'full' }) {
         staticBeads.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          rx: Math.random() * 3.5 + 2.5,
-          ry: (Math.random() * 3.5 + 2.5) * (Math.random() * 0.3 + 0.85),
-          opacity: Math.random() * 0.25 + 0.45
+          rx: Math.random() * 4.5 + 3.0,
+          ry: (Math.random() * 4.5 + 3.0) * (Math.random() * 0.3 + 0.85),
+          opacity: Math.random() * 0.35 + 0.55
         });
       }
     };
@@ -227,23 +227,23 @@ export default function GlassWallRainDrip({ density = 'full' }) {
       slidingDrops.length = 0;
       ambientRainStreaks.length = 0;
 
-      let slidingCount = Math.floor(w / 40) + 16;
+      let slidingCount = Math.floor(w / 18) + 32; // Double sliding water drops
       if (density === 'moderate') {
-        slidingCount = Math.floor(w / 80) + 8;
+        slidingCount = Math.floor(w / 40) + 16;
       } else if (density === 'low') {
-        slidingCount = Math.floor(w / 160) + 5;
+        slidingCount = Math.floor(w / 80) + 8;
       } else if (density === 'minimal') {
-        slidingCount = Math.floor(w / 350) + 3;
+        slidingCount = Math.floor(w / 180) + 5;
       } else if (density === 'micro') {
-        slidingCount = 2;
+        slidingCount = 4;
       }
 
       for (let i = 0; i < slidingCount; i++) {
         slidingDrops.push({
           x: Math.random() * w,
           y: Math.random() * (h + 400) - 200,
-          r: Math.random() * 5.0 + 4.0,
-          length: Math.random() * 25 + 20,
+          r: Math.random() * 4.5 + 3.2,
+          length: Math.random() * 12 + 7,
           baseVy: Math.random() * 3.2 + 1.8,
           vx: (Math.random() - 0.5) * 0.15,
           trail: [],
@@ -258,7 +258,7 @@ export default function GlassWallRainDrip({ density = 'full' }) {
           x: Math.random() * w,
           y: Math.random() * h - h,
           baseVy: Math.random() * 7 + 5,
-          length: Math.random() * 24 + 14,
+          length: Math.random() * 7 + 4,
           baseOpacity: Math.random() * 0.16 + 0.06
         });
       }

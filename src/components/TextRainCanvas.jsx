@@ -36,8 +36,8 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
         y: Math.random() * window.innerHeight,
         baseVy: Math.random() * 6 + 10,
         baseVx: -1.6 - Math.random() * 1.0,
-        baseLength: Math.random() * 26 + 18,
-        width: Math.random() * 1.6 + 0.9,
+        baseLength: Math.random() * 8 + 6,
+        width: Math.random() * 1.4 + 0.8,
         opacity: Math.random() * 0.45 + 0.45,
         lastSplashedY: -999
       });
@@ -109,7 +109,7 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
 
         const currentVy = drop.baseVy * (1.0 + smoothStorm * 1.35);
         const currentVx = drop.baseVx * (1.0 + smoothStorm * 0.6);
-        const currentLength = drop.baseLength * (1.0 + smoothStorm * 0.8);
+        const currentLength = drop.baseLength * (1.0 + smoothStorm * 0.4);
 
         drop.x += currentVx * speedFactor;
         drop.y += currentVy * speedFactor;

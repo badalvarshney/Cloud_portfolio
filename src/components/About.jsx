@@ -30,6 +30,12 @@ export default function About({ scrollProgress = 1 }) {
         pointerEvents: aboutOpacity > 0.3 ? 'auto' : 'none'
       }}
     >
+      {/* 3D Rounded Glass Bevel Edge & Refraction Trim */}
+      <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-white/15 via-white/5 to-transparent border-t border-white/35 rounded-t-[2.5rem] md:rounded-t-[4rem] shadow-[inset_0_1.5px_3px_rgba(255,255,255,0.5),0_-8px_25px_rgba(0,0,0,0.5)] z-30 pointer-events-none"></div>
+
+      {/* Luminous Specular Glass Top Highlight Line */}
+      <div className="absolute top-0 left-6 right-6 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 to-transparent z-35 pointer-events-none shadow-[0_0_12px_rgba(255,255,255,0.5)]"></div>
+
       {/* Background Subtle Grid & Light Glow */}
       <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none"></div>
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-white/5 rounded-full blur-[140px] pointer-events-none"></div>

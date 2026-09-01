@@ -41,8 +41,10 @@ h4,
 
 /* Custom Utilities */
 .glass-panel {
-  background: rgba(12, 16, 26, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 16, 26, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .glass-panel-hover {
@@ -50,9 +52,9 @@ h4,
 }
 
 .glass-panel-hover:hover {
-  background: rgba(20, 28, 42, 0.75);
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
+  background: rgba(20, 28, 42, 0.82);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 35px rgba(255, 255, 255, 0.12);
 }
 
 .text-gradient {
@@ -74,35 +76,35 @@ h4,
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
 
-/* Progressive Section Dimming Arc (Seamless Boundary Color Matching + Crisp blur(4px)) */
+/* Progressive Section Dimming Arc & Heavy Frosted Glass Backdrop Blur */
 .section-dimming-1 {
-  background: linear-gradient(180deg, transparent 0%, rgba(14, 18, 28, 0.15) 100%);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: linear-gradient(180deg, transparent 0%, rgba(14, 18, 28, 0.35) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .section-dimming-2 {
-  background: linear-gradient(180deg, rgba(14, 18, 28, 0.15) 0%, rgba(10, 14, 22, 0.38) 100%);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: linear-gradient(180deg, rgba(14, 18, 28, 0.35) 0%, rgba(10, 14, 22, 0.55) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .section-dimming-3 {
-  background: linear-gradient(180deg, rgba(10, 14, 22, 0.38) 0%, rgba(8, 11, 18, 0.60) 100%);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: linear-gradient(180deg, rgba(10, 14, 22, 0.55) 0%, rgba(8, 11, 18, 0.72) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 .section-dimming-4 {
-  background: linear-gradient(180deg, rgba(8, 11, 18, 0.60) 0%, rgba(5, 7, 13, 0.78) 100%);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: linear-gradient(180deg, rgba(8, 11, 18, 0.72) 0%, rgba(5, 7, 13, 0.85) 100%);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
 }
 
 .section-dimming-5 {
-  background: linear-gradient(180deg, rgba(5, 7, 13, 0.78) 0%, rgba(3, 4, 8, 0.90) 100%);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: linear-gradient(180deg, rgba(5, 7, 13, 0.85) 0%, rgba(3, 4, 8, 0.94) 100%);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
 }
 
 /* Zero Border Seams across all sections */

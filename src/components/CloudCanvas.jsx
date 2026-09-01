@@ -13,9 +13,9 @@ export default function CloudCanvas({ onScrollProgress }) {
     const container = mountRef.current;
     if (!container) return;
 
-    // Scene setup with atmospheric deep sky fog
+    // Scene setup with atmospheric deep sky fog (Lower density to prevent grey mist wash)
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x0c101c, 0.001);
+    scene.fog = new THREE.FogExp2(0x04060a, 0.0004);
 
     // Camera setup
     const camera = new THREE.PerspectiveCamera(
@@ -32,24 +32,74 @@ export default function CloudCanvas({ onScrollProgress }) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     container.appendChild(renderer.domElement);
 
-    // Volumetric Procedural Cloud Texture Generator (Optimized 256x256 canvas for zero TBT)
-    const createRealisticCloudTexture = (variation = 0) => {
+    // Volumetric Multi-Tone Procedural HD Cloud Texture Generator (512x512 Crisp Cumulus Noise)
+    const createRealisticCloudTexture = (variation = 0, type = 'dark') => {
       const canvas = document.createElement('canvas');
-      canvas.width = 256;
-      canvas.height = 256;
+      canvas.width = 512;
+      canvas.height = 512;
       const ctx = canvas.getContext('2d');
 
-      // Dark bottom shadow base for 3D depth
+      let shadowsColor, puffColors, billowColors;
+
+      if (type === 'dark') {
+        // Deep Pitch-Black & Dark Charcoal Storm Cloud
+        shadowsColor = { base: 'rgba(0, 0, 0, 0.99)', mid: 'rgba(2, 4, 8, 0.95)' };
+        puffColors = [
+          'rgba(45, 55, 75, 0.98)',   // Dark Slate Puff Top
+          'rgba(25, 32, 45, 0.94)',   // Deep Charcoal Mid
+          'rgba(12, 16, 25, 0.88)',   // Near-Black Lower
+          'rgba(4, 6, 12, 0.70)',     // Pitch Black Transition
+          'rgba(0, 0, 0, 0)'
+        ];
+        billowColors = [
+          'rgba(40, 50, 68, 0.95)',
+          'rgba(15, 20, 30, 0.80)',
+          'rgba(0, 0, 0, 0)'
+        ];
+      } else if (type === 'bright') {
+        // High-Contrast Fluffy Cumulus Cloud with Dark Base (512x512 HD Quality)
+        shadowsColor = { base: 'rgba(15, 20, 32, 0.95)', mid: 'rgba(8, 12, 20, 0.80)' };
+        puffColors = [
+          'rgba(245, 250, 255, 0.99)', // Crisp Brilliant White Fluffy Top
+          'rgba(215, 230, 250, 0.92)', // Fluffy Silver Mid
+          'rgba(135, 155, 190, 0.75)', // Blue-Slate Transition
+          'rgba(50, 65, 92, 0.45)',    // Dark Base
+          'rgba(0, 0, 0, 0)'
+        ];
+        billowColors = [
+          'rgba(230, 240, 255, 0.95)',
+          'rgba(155, 175, 208, 0.60)',
+          'rgba(0, 0, 0, 0)'
+        ];
+      } else {
+        // Darkened Normal Volumetric Storm Cloud
+        shadowsColor = { base: 'rgba(4, 7, 14, 0.98)', mid: 'rgba(2, 4, 9, 0.88)' };
+        puffColors = [
+          'rgba(110, 132, 165, 0.96)', // Dark Slate-Blue Top
+          'rgba(72, 90, 122, 0.91)',   // Mid Tone
+          'rgba(40, 54, 78, 0.78)',    // Dark Lower
+          'rgba(18, 25, 38, 0.50)',    // Transition
+          'rgba(0, 0, 0, 0)'
+        ];
+        billowColors = [
+          'rgba(95, 115, 148, 0.92)',
+          'rgba(48, 64, 92, 0.65)',
+          'rgba(0, 0, 0, 0)'
+        ];
+      }
+
+      // 1. Dark bottom shadow base for 3D depth (512x512 scale)
       const shadows = [
-        { x: 128, y: 155, r: 85, col: 'rgba(30, 40, 60, 0.75)' },
-        { x: 85, y: 165, r: 68, col: 'rgba(25, 35, 55, 0.65)' },
-        { x: 172, y: 165, r: 68, col: 'rgba(25, 35, 55, 0.65)' }
+        { x: 256, y: 310, r: 170, col: shadowsColor.base },
+        { x: 170, y: 330, r: 136, col: shadowsColor.base },
+        { x: 344, y: 330, r: 136, col: shadowsColor.base }
       ];
 
       shadows.forEach(p => {
         const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
         grad.addColorStop(0, p.col);
-        grad.addColorStop(0.7, 'rgba(20, 30, 50, 0.3)');
+        grad.addColorStop(0.75, shadowsColor.mid);
+        grad.addColorStop(0.95, 'rgba(0, 0, 0, 0.2)');
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -57,25 +107,25 @@ export default function CloudCanvas({ onScrollProgress }) {
         ctx.fill();
       });
 
-      // White Cumulus Lobes
+      // 2. Multi-Tone Crisp Cumulus Lobes
       const whitePuffs = [
-        { x: 128, y: 115, r: 78 },
-        { x: 88, y: 120, r: 65 },
-        { x: 168, y: 120, r: 65 },
-        { x: 58, y: 138, r: 50 },
-        { x: 198, y: 138, r: 50 },
-        { x: 105, y: 92, r: 55 },
-        { x: 150, y: 90, r: 58 },
-        { x: 128, y: 80, r: 50 }
+        { x: 256, y: 230, r: 156 },
+        { x: 176, y: 240, r: 130 },
+        { x: 336, y: 240, r: 130 },
+        { x: 116, y: 276, r: 100 },
+        { x: 396, y: 276, r: 100 },
+        { x: 210, y: 184, r: 110 },
+        { x: 300, y: 180, r: 116 },
+        { x: 256, y: 160, r: 100 }
       ];
 
       whitePuffs.forEach(p => {
         const grad = ctx.createRadialGradient(p.x - p.r * 0.2, p.y - p.r * 0.25, 0, p.x, p.y, p.r);
-        grad.addColorStop(0, 'rgba(255, 255, 255, 0.96)');
-        grad.addColorStop(0.35, 'rgba(240, 246, 255, 0.85)');
-        grad.addColorStop(0.7, 'rgba(180, 195, 220, 0.4)');
-        grad.addColorStop(0.9, 'rgba(120, 138, 170, 0.12)');
-        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        grad.addColorStop(0, puffColors[0]);
+        grad.addColorStop(0.40, puffColors[1]);
+        grad.addColorStop(0.75, puffColors[2]);
+        grad.addColorStop(0.92, puffColors[3]);
+        grad.addColorStop(1, puffColors[4]);
 
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -83,19 +133,20 @@ export default function CloudCanvas({ onScrollProgress }) {
         ctx.fill();
       });
 
-      // Fluffy Edge Billows
-      const billowCount = 24;
+      // 3. Fluffy Edge Billows with Sharp Contours
+      const billowCount = 36;
       for (let i = 0; i < billowCount; i++) {
         const angle = (i / billowCount) * Math.PI * 2;
-        const dist = 38 + Math.sin(i * 3 + variation) * 22;
-        const bx = 128 + Math.cos(angle) * dist * 1.3;
-        const by = 115 + Math.sin(angle) * dist * 0.75;
-        const br = 21 + (i % 5) * 4;
+        const dist = 76 + Math.sin(i * 3 + variation) * 44;
+        const bx = 256 + Math.cos(angle) * dist * 1.3;
+        const by = 230 + Math.sin(angle) * dist * 0.75;
+        const br = 42 + (i % 5) * 8;
 
         const grad = ctx.createRadialGradient(bx - br * 0.2, by - br * 0.2, 0, bx, by, br);
-        grad.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
-        grad.addColorStop(0.5, 'rgba(220, 232, 250, 0.35)');
-        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        grad.addColorStop(0, billowColors[0]);
+        grad.addColorStop(0.60, billowColors[1]);
+        grad.addColorStop(0.92, 'rgba(0, 0, 0, 0.1)');
+        grad.addColorStop(1, billowColors[2]);
 
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -106,19 +157,24 @@ export default function CloudCanvas({ onScrollProgress }) {
       return new THREE.CanvasTexture(canvas);
     };
 
+    // Generate 6 Distinct High-Definition Cloud Textures (Dark Pitch-Black Base, Mid Storm, Bright Fluffy Top)
     const cloudTextures = [
-      createRealisticCloudTexture(1),
-      createRealisticCloudTexture(2),
-      createRealisticCloudTexture(3)
+      { tex: createRealisticCloudTexture(1, 'dark'), opacity: 0.98 },
+      { tex: createRealisticCloudTexture(2, 'dark'), opacity: 0.96 },
+      { tex: createRealisticCloudTexture(3, 'dark'), opacity: 0.95 },
+      { tex: createRealisticCloudTexture(4, 'medium'), opacity: 0.92 },
+      { tex: createRealisticCloudTexture(5, 'medium'), opacity: 0.90 },
+      { tex: createRealisticCloudTexture(6, 'bright'), opacity: 0.94 }
     ];
 
     const cloudMaterials = cloudTextures.map(
-      tex =>
+      item =>
         new THREE.SpriteMaterial({
-          map: tex,
+          map: item.tex,
           transparent: true,
-          opacity: 0.94,
+          opacity: item.opacity,
           blending: THREE.NormalBlending,
+          alphaTest: 0.08,
           depthWrite: false,
         })
     );
@@ -126,26 +182,27 @@ export default function CloudCanvas({ onScrollProgress }) {
     const cloudGroup = new THREE.Group();
     const cloudParticles = [];
 
-    // LAYER 1: Dense Cover Clouds (Using cloned materials for individual opacity control)
-    const coverCloudCount = 90;
+    // LAYER 1: Full Sky Cover Clouds (40 High-Definition Clouds - Zero GPU Lag)
+    const coverCloudCount = 40;
     for (let f = 0; f < coverCloudCount; f++) {
       const baseMat = cloudMaterials[f % cloudMaterials.length];
       const mat = baseMat.clone();
       const sprite = new THREE.Sprite(mat);
 
-      const x = (Math.random() - 0.5) * 2600;
+      const x = (Math.random() - 0.5) * 2800;
       const y = (Math.random() - 0.5) * 1600;
-      const z = 900 - Math.random() * 3800;
+      const z = 800 - Math.random() * 3200;
 
       sprite.position.set(x, y, z);
       const scale = 750 + Math.random() * 850;
       sprite.scale.set(scale, scale * (0.65 + Math.random() * 0.25), 1);
-      sprite.material.rotation = (Math.random() - 0.5) * 0.5;
+      sprite.material.rotation = (Math.random() - 0.5) * 0.4;
 
       sprite.userData = {
         rotationSpeed: (Math.random() - 0.5) * 0.0012,
         initialY: y,
         initialX: x,
+        baseOpacity: baseMat.opacity,
         floatOffset: Math.random() * Math.PI * 2
       };
 
@@ -153,19 +210,78 @@ export default function CloudCanvas({ onScrollProgress }) {
       cloudParticles.push(sprite);
     }
 
-    // LAYER 2: Background Canopy Clouds
-    const canopyCloudCount = 40;
+    // LAYER 2: TOP & TOP-LEFT SKY CANOPY CLOUDS (30 Clouds - Top & Top-Left Coverage)
+    const topCloudCount = 30;
+    for (let t = 0; t < topCloudCount; t++) {
+      const baseMat = cloudMaterials[t % cloudMaterials.length];
+      const mat = baseMat.clone();
+      const sprite = new THREE.Sprite(mat);
+
+      const isTopLeft = Math.random() < 0.60;
+      const x = isTopLeft
+        ? -Math.random() * 1400 - 100
+        : (Math.random() - 0.5) * 2800;
+      const y = 150 + Math.random() * 650;
+      const z = 700 - Math.random() * 3000;
+
+      sprite.position.set(x, y, z);
+      const scale = 750 + Math.random() * 900;
+      sprite.scale.set(scale, scale * (0.6 + Math.random() * 0.3), 1);
+      sprite.material.rotation = (Math.random() - 0.5) * 0.4;
+
+      sprite.userData = {
+        rotationSpeed: (Math.random() - 0.5) * 0.0012,
+        initialY: y,
+        initialX: x,
+        baseOpacity: baseMat.opacity,
+        floatOffset: Math.random() * Math.PI * 2
+      };
+
+      cloudGroup.add(sprite);
+      cloudParticles.push(sprite);
+    }
+
+    // LAYER 3: Dense Lower Horizon Blanket Clouds (30 Clouds)
+    const horizonCloudCount = 30;
+    for (let h = 0; h < horizonCloudCount; h++) {
+      const baseMat = cloudMaterials[h % cloudMaterials.length];
+      const mat = baseMat.clone();
+      const sprite = new THREE.Sprite(mat);
+
+      const x = (Math.random() - 0.5) * 3200;
+      const y = -350 - Math.random() * 550;
+      const z = 800 - Math.random() * 3000;
+
+      sprite.position.set(x, y, z);
+      const scale = 850 + Math.random() * 1000;
+      sprite.scale.set(scale, scale * 0.6, 1);
+      sprite.material.rotation = (Math.random() - 0.5) * 0.3;
+
+      sprite.userData = {
+        rotationSpeed: (Math.random() - 0.5) * 0.0008,
+        initialY: y,
+        initialX: x,
+        baseOpacity: baseMat.opacity,
+        floatOffset: Math.random() * Math.PI * 2
+      };
+
+      cloudGroup.add(sprite);
+      cloudParticles.push(sprite);
+    }
+
+    // LAYER 4: Deep Mid-Atmosphere Background Clouds (20 Clouds)
+    const canopyCloudCount = 20;
     for (let c = 0; c < canopyCloudCount; c++) {
       const baseMat = cloudMaterials[c % cloudMaterials.length];
       const mat = baseMat.clone();
       const sprite = new THREE.Sprite(mat);
 
-      const x = (Math.random() - 0.5) * 2400;
+      const x = (Math.random() - 0.5) * 3000;
       const y = (Math.random() - 0.5) * 1400;
       const z = -200 - Math.random() * 2400;
 
       sprite.position.set(x, y, z);
-      const scale = 750 + Math.random() * 800;
+      const scale = 800 + Math.random() * 900;
       sprite.scale.set(scale, scale * 0.7, 1);
       sprite.material.rotation = (Math.random() - 0.5) * 0.4;
 
@@ -173,6 +289,7 @@ export default function CloudCanvas({ onScrollProgress }) {
         rotationSpeed: (Math.random() - 0.5) * 0.001,
         initialY: y,
         initialX: x,
+        baseOpacity: baseMat.opacity,
         floatOffset: Math.random() * Math.PI * 2
       };
 
@@ -182,15 +299,15 @@ export default function CloudCanvas({ onScrollProgress }) {
 
     scene.add(cloudGroup);
 
-    // Directional Sunlight & Sky Ambient Lighting
-    const ambientLight = new THREE.AmbientLight(0xd4e4ff, 0.8);
+    // Directional Sunlight & Sky Ambient Lighting (Crisp Volumetric Illumination)
+    const ambientLight = new THREE.AmbientLight(0x7590b5, 0.55);
     scene.add(ambientLight);
 
-    const sunLight = new THREE.DirectionalLight(0xfffaee, 1.9);
+    const sunLight = new THREE.DirectionalLight(0xd5e5ff, 1.1);
     sunLight.position.set(300, 600, 500);
     scene.add(sunLight);
 
-    const shadowLight = new THREE.DirectionalLight(0x354565, 1.0);
+    const shadowLight = new THREE.DirectionalLight(0x152030, 1.2);
     shadowLight.position.set(-300, -500, -300);
     scene.add(shadowLight);
 
@@ -494,29 +611,25 @@ export default function CloudCanvas({ onScrollProgress }) {
           clearRatio = 0;
         } else if (progress > 0.28 && progress <= 0.74) {
           const p = (progress - 0.28) / 0.46;
-          clearRatio = 0.5 - 0.5 * Math.cos(p * Math.PI);
-        } else if (progress > 0.74 && progress <= 0.84) {
-          clearRatio = 1.0;
+          clearRatio = (0.5 - 0.5 * Math.cos(p * Math.PI)) * 0.25; // Subtle 25% max drift
         } else {
-          // Continuous Cosine Smooth Transition from 1.0 -> 0.45 without any jerk
-          const p = Math.min(1.0, (progress - 0.84) / 0.16);
-          const smoothP = 0.5 - 0.5 * Math.cos(p * Math.PI);
-          clearRatio = 1.0 - smoothP * 0.55;
+          clearRatio = 0.25;
         }
 
-        // Keep cloud brightness rich & visible as user enters About section (progress > 0.65)
+        // Keep clouds rich & visible throughout all sections
         let sectionDim = 1.0;
         if (progress > 0.65) {
           const dimProgress = Math.min(1.0, (progress - 0.65) / 0.25);
           const smoothDim = 0.5 - 0.5 * Math.cos(dimProgress * Math.PI);
-          sectionDim = 1.0 - smoothDim * 0.25; // Smoothly dims to 0.75 rich cloud opacity
+          sectionDim = 1.0 - smoothDim * 0.15; // Retains 85% full opacity
         }
 
         cloudParticles.forEach((particle) => {
           particle.position.y = particle.userData.initialY + progress * 480;
-          particle.material.opacity = (0.94 - clearRatio * 0.50) * sectionDim;
+          const bOp = particle.userData.baseOpacity || 0.90;
+          particle.material.opacity = bOp * (1.0 - clearRatio * 0.15) * sectionDim;
 
-          const shiftAmount = clearRatio * 320;
+          const shiftAmount = clearRatio * 80; // Gentle 3D parallax drift
           if (particle.userData.initialX < 0) {
             particle.position.x = particle.userData.initialX - shiftAmount;
           } else {
