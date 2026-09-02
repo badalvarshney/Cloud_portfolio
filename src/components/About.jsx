@@ -67,7 +67,10 @@ export default function About({ scrollProgress = 1 }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
 
           {/* Card 1 */}
-          <div className="glass-panel p-8 rounded-3xl glass-panel-hover group relative overflow-hidden">
+          <div
+            className="glass-card glass-panel w-full h-auto p-8 rounded-3xl glass-panel-hover group relative overflow-hidden"
+            style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+          >
             <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/15 flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-all">
               <Zap className="w-6 h-6" />
             </div>
@@ -84,7 +87,10 @@ export default function About({ scrollProgress = 1 }) {
           </div>
 
           {/* Card 2 */}
-          <div className="glass-panel p-8 rounded-3xl glass-panel-hover group relative overflow-hidden">
+          <div
+            className="glass-card glass-panel w-full h-auto p-8 rounded-3xl glass-panel-hover group relative overflow-hidden"
+            style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+          >
             <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/15 flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-all">
               <Sparkles className="w-6 h-6" />
             </div>
@@ -101,7 +107,10 @@ export default function About({ scrollProgress = 1 }) {
           </div>
 
           {/* Card 3 */}
-          <div className="glass-panel p-8 rounded-3xl glass-panel-hover group relative overflow-hidden">
+          <div
+            className="glass-card glass-panel w-full h-auto p-8 rounded-3xl glass-panel-hover group relative overflow-hidden"
+            style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+          >
             <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/15 flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-all">
               <ShieldCheck className="w-6 h-6" />
             </div>
@@ -120,7 +129,10 @@ export default function About({ scrollProgress = 1 }) {
         </div>
 
         {/* Interactive Code Window / Developer Bio */}
-        <div className="glass-panel p-8 md:p-12 rounded-3xl border border-white/15 relative overflow-hidden">
+        <div
+          className="glass-card glass-panel w-full h-auto p-8 md:p-12 rounded-3xl border border-white/15 relative overflow-hidden"
+          style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+        >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
             <div className="space-y-6">

@@ -98,7 +98,8 @@ function Skills() {
             return (
               <div
                 key={item.category}
-                className="glass-panel p-8 rounded-3xl border border-white/15 glass-panel-hover flex flex-col justify-between group relative overflow-hidden"
+                className="glass-card glass-panel w-full h-auto p-8 rounded-3xl border border-white/15 glass-panel-hover flex flex-col justify-between group relative overflow-hidden"
+                style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
               >
                 {/* Background Subtle Glow */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all pointer-events-none"></div>

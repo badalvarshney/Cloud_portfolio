@@ -104,7 +104,8 @@ function Projects() {
           {filteredProjects.map((project) => (
             <div
               key={project.id}
-              className="glass-panel rounded-3xl overflow-hidden glass-panel-hover group flex flex-col justify-between border border-white/15 relative z-30"
+              className="glass-card glass-panel w-full h-auto rounded-3xl overflow-hidden glass-panel-hover group flex flex-col justify-between border border-white/15 relative z-30"
+              style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
             >
               {/* Thumbnail Container */}
               <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-zinc-900 z-20">
@@ -193,7 +194,10 @@ function Projects() {
       {/* Project Modal Preview */}
       {activeModalProject && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
-          <div className="glass-panel max-w-2xl w-full rounded-3xl p-8 border border-white/20 relative animate-in fade-in zoom-in duration-300">
+          <div
+            className="glass-card glass-panel max-w-2xl w-full h-auto rounded-3xl p-8 border border-white/20 relative animate-in fade-in zoom-in duration-300"
+            style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+          >
             <button
               onClick={() => setActiveModalProject(null)}
               className="absolute top-6 right-6 p-2 rounded-full bg-zinc-800 text-white hover:bg-white hover:text-black transition-colors"

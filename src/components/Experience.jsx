@@ -80,7 +80,10 @@ function Experience() {
 
               {/* Content Card */}
               <div className="w-full md:w-1/2 pl-12 md:pl-0">
-                <div className="glass-panel p-8 rounded-3xl border border-white/15 glass-panel-hover space-y-4">
+                <div
+                  className="glass-card glass-panel w-full h-auto p-8 rounded-3xl border border-white/15 glass-panel-hover space-y-4"
+                  style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+                >
                   <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-4">
                     <span className="text-xs font-mono font-bold text-white px-3 py-1 rounded-full bg-zinc-900 border border-white/20">
                       {item.period}
