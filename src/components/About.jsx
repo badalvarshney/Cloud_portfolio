@@ -30,18 +30,9 @@ export default function About({ scrollProgress = 1 }) {
         pointerEvents: aboutOpacity > 0.3 ? 'auto' : 'none'
       }}
     >
-      {/* 3D Rounded Glass Bevel Edge & Refraction Trim */}
-      <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-white/15 via-white/5 to-transparent border-t border-white/35 rounded-t-[2.5rem] md:rounded-t-[4rem] shadow-[inset_0_1.5px_3px_rgba(255,255,255,0.5),0_-8px_25px_rgba(0,0,0,0.5)] z-30 pointer-events-none"></div>
-
-      {/* Luminous Specular Glass Top Highlight Line */}
-      <div className="absolute top-0 left-6 right-6 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 to-transparent z-35 pointer-events-none shadow-[0_0_12px_rgba(255,255,255,0.5)]"></div>
-
       {/* Background Subtle Grid & Light Glow */}
       <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none"></div>
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-white/5 rounded-full blur-[140px] pointer-events-none"></div>
-
-      {/* Glass Wall Rain Drip Engine */}
-      <GlassWallRainDrip density="full" />
 
       <div className="max-w-7xl mx-auto relative z-10">
 
@@ -54,11 +45,11 @@ export default function About({ scrollProgress = 1 }) {
             </div>
             <h2 className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-white uppercase">
               Derived from Clouds, <br />
-              <span className="text-zinc-500">Built with Precision.</span>
+              <span className="text-zinc-400">Built with Precision.</span>
             </h2>
           </div>
 
-          <p className="text-zinc-400 text-base max-w-md leading-relaxed font-light">
+          <p className="text-zinc-300 text-base max-w-md leading-relaxed font-light">
             Like clouds taking infinite creative forms, Badal Varshney transforms complex web technologies into seamless, ultra-fast, and visually striking digital experiences.
           </p>
         </div>
@@ -69,60 +60,69 @@ export default function About({ scrollProgress = 1 }) {
           {/* Card 1 */}
           <div
             className="glass-card glass-panel w-full h-auto p-8 rounded-3xl glass-panel-hover group relative overflow-hidden"
-            style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+            style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset', transform: 'translateZ(0)' }}
           >
-            <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/15 flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-all">
-              <Zap className="w-6 h-6" />
-            </div>
-            <h3 className="font-display text-2xl font-bold text-white mb-3">
-              Lightning Fast Speed
-            </h3>
-            <p className="text-zinc-400 text-sm leading-relaxed">
-              Badal builds web apps prioritizing minimal bundle sizes, optimized DOM rendering, lazy loading, and smooth 60+ FPS frame rates.
-            </p>
-            <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-500">
-              <span>Performance Goal</span>
-              <span className="text-white font-bold">100 / 100 Speed</span>
+            <GlassWallRainDrip density="card" />
+            <div className="relative z-10" style={{ transform: 'translateZ(0)' }}>
+              <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/15 flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-all">
+                <Zap className="w-6 h-6" />
+              </div>
+              <h3 className="font-display text-2xl font-bold text-white mb-3">
+                Lightning Fast Speed
+              </h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                Badal builds web apps prioritizing minimal bundle sizes, optimized DOM rendering, lazy loading, and smooth 60+ FPS frame rates.
+              </p>
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-500">
+                <span>Performance Goal</span>
+                <span className="text-white font-bold">100 / 100 Speed</span>
+              </div>
             </div>
           </div>
 
           {/* Card 2 */}
           <div
             className="glass-card glass-panel w-full h-auto p-8 rounded-3xl glass-panel-hover group relative overflow-hidden"
-            style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+            style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset', transform: 'translateZ(0)' }}
           >
-            <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/15 flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-all">
-              <Sparkles className="w-6 h-6" />
-            </div>
-            <h3 className="font-display text-2xl font-bold text-white mb-3">
-              3D WebGL & Motion Art
-            </h3>
-            <p className="text-zinc-400 text-sm leading-relaxed">
-              Specialized in crafting immersive 3D cloud portals, Three.js canvas engines, GSAP scroll triggers, and fluid micro-interactions.
-            </p>
-            <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-500">
-              <span>Visual Superpower</span>
-              <span className="text-white font-bold">Three.js + GSAP 3</span>
+            <GlassWallRainDrip density="card" />
+            <div className="relative z-10" style={{ transform: 'translateZ(0)' }}>
+              <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/15 flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-all">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <h3 className="font-display text-2xl font-bold text-white mb-3">
+                3D WebGL & Motion Art
+              </h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                Specialized in crafting immersive 3D cloud portals, Three.js canvas engines, GSAP scroll triggers, and fluid micro-interactions.
+              </p>
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-500">
+                <span>Visual Superpower</span>
+                <span className="text-white font-bold">Three.js + GSAP 3</span>
+              </div>
             </div>
           </div>
 
           {/* Card 3 */}
           <div
             className="glass-card glass-panel w-full h-auto p-8 rounded-3xl glass-panel-hover group relative overflow-hidden"
-            style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+            style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset', transform: 'translateZ(0)' }}
           >
-            <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/15 flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-all">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h3 className="font-display text-2xl font-bold text-white mb-3">
-              Clean React Architecture
-            </h3>
-            <p className="text-zinc-400 text-sm leading-relaxed">
-              Structuring robust React 18 & Next.js platforms with clean modular component libraries, clear state management, and scalability.
-            </p>
-            <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-500">
-              <span>Development Standard</span>
-              <span className="text-white font-bold">Production Ready</span>
+            <GlassWallRainDrip density="card" />
+            <div className="relative z-10" style={{ transform: 'translateZ(0)' }}>
+              <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/15 flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-all">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h3 className="font-display text-2xl font-bold text-white mb-3">
+                Clean React Architecture
+              </h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                Structuring robust React 18 & Next.js platforms with clean modular component libraries, clear state management, and scalability.
+              </p>
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-500">
+                <span>Development Standard</span>
+                <span className="text-white font-bold">Production Ready</span>
+              </div>
             </div>
           </div>
 
@@ -131,9 +131,10 @@ export default function About({ scrollProgress = 1 }) {
         {/* Interactive Code Window / Developer Bio */}
         <div
           className="glass-card glass-panel w-full h-auto p-8 md:p-12 rounded-3xl border border-white/15 relative overflow-hidden"
-          style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+          style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset', transform: 'translateZ(0)' }}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <GlassWallRainDrip density="card" />
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center" style={{ transform: 'translateZ(0)' }}>
 
             <div className="space-y-6">
               <div className="flex items-center gap-3">

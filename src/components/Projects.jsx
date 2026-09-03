@@ -65,9 +65,6 @@ function Projects() {
 
   return (
     <section id="projects" className="relative py-32 px-6 md:px-12 section-dimming-2 z-20 overflow-hidden section-divider">
-      {/* Moderate sliding water droplets */}
-      <GlassWallRainDrip density="moderate" />
-
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Header */}
@@ -78,7 +75,7 @@ function Projects() {
               <span>02 // Selected Works</span>
             </div>
             <h2 className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-white uppercase">
-              Featured <span className="text-zinc-500">Projects</span>
+              Featured <span className="text-zinc-400">Projects</span>
             </h2>
           </div>
 
@@ -105,8 +102,9 @@ function Projects() {
             <div
               key={project.id}
               className="glass-card glass-panel w-full h-auto rounded-3xl overflow-hidden glass-panel-hover group flex flex-col justify-between border border-white/15 relative z-30"
-              style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+              style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset', transform: 'translateZ(0)' }}
             >
+              <GlassWallRainDrip density="card" />
               {/* Thumbnail Container */}
               <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-zinc-900 z-20">
                 <img
@@ -114,6 +112,10 @@ function Projects() {
                   alt={project.title}
                   loading="lazy"
                   decoding="async"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop';
+                  }}
                   className="w-full h-full object-cover grayscale contrast-125 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700 opacity-80 group-hover:opacity-100"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
@@ -136,7 +138,7 @@ function Projects() {
               </div>
 
               {/* Card Details (High Z-Index z-30 Layer - Never Disappears) */}
-              <div className="p-8 flex flex-col justify-between flex-grow relative z-30 ">
+              <div className="p-8 flex flex-col justify-between flex-grow relative z-30" style={{ transform: 'translateZ(0)' }}>
                 <div>
                   <div className="text-xs font-mono uppercase tracking-widest text-zinc-400 mb-2">
                     {project.category}

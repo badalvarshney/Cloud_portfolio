@@ -43,9 +43,6 @@ const EXPERIENCES = [
 function Experience() {
   return (
     <section id="experience" className="relative py-32 px-6 md:px-12 section-dimming-4 z-20 overflow-hidden section-divider">
-      {/* Minimal sliding water droplets */}
-      <GlassWallRainDrip density="minimal" />
-
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Header */}
@@ -56,7 +53,7 @@ function Experience() {
               <span>04 // Timeline & Journey</span>
             </div>
             <h2 className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-white uppercase">
-              Experience & <span className="text-zinc-500">Milestones</span>
+              Experience & <span className="text-zinc-400">Milestones</span>
             </h2>
           </div>
 
@@ -81,38 +78,41 @@ function Experience() {
               {/* Content Card */}
               <div className="w-full md:w-1/2 pl-12 md:pl-0">
                 <div
-                  className="glass-card glass-panel w-full h-auto p-8 rounded-3xl border border-white/15 glass-panel-hover space-y-4"
-                  style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+                  className="glass-card glass-panel w-full h-auto p-8 rounded-3xl border border-white/15 glass-panel-hover space-y-4 relative overflow-hidden"
+                  style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset', transform: 'translateZ(0)' }}
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-4">
-                    <span className="text-xs font-mono font-bold text-white px-3 py-1 rounded-full bg-zinc-900 border border-white/20">
-                      {item.period}
-                    </span>
-                    <span className="text-xs font-mono text-zinc-400 flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-zinc-500" />
-                      {item.location}
-                    </span>
-                  </div>
+                  <GlassWallRainDrip density="card" />
+                  <div className="relative z-10 space-y-4" style={{ transform: 'translateZ(0)' }}>
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-4">
+                      <span className="text-xs font-mono font-bold text-white px-3 py-1 rounded-full bg-zinc-900 border border-white/20">
+                        {item.period}
+                      </span>
+                      <span className="text-xs font-mono text-zinc-400 flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-zinc-500" />
+                        {item.location}
+                      </span>
+                    </div>
 
-                  <h3 className="font-display text-2xl font-bold text-white">
-                    {item.role}
-                  </h3>
+                    <h3 className="font-display text-2xl font-bold text-white">
+                      {item.role}
+                    </h3>
 
-                  <div className="text-sm font-semibold text-zinc-400">
-                    {item.company}
-                  </div>
+                    <div className="text-sm font-semibold text-zinc-400">
+                      {item.company}
+                    </div>
 
-                  <p className="text-zinc-300 text-sm leading-relaxed font-light">
-                    {item.description}
-                  </p>
+                    <p className="text-zinc-300 text-sm leading-relaxed font-light">
+                      {item.description}
+                    </p>
 
-                  <div className="space-y-2 pt-2">
-                    {item.achievements.map((ach, aIdx) => (
-                      <div key={aIdx} className="flex items-start gap-2.5 text-xs text-zinc-400">
-                        <CheckCircle className="w-3.5 h-3.5 text-white shrink-0 mt-0.5" />
-                        <span>{ach}</span>
-                      </div>
-                    ))}
+                    <div className="space-y-2 pt-2">
+                      {item.achievements.map((ach, aIdx) => (
+                        <div key={aIdx} className="flex items-start gap-2.5 text-xs text-zinc-400">
+                          <CheckCircle className="w-3.5 h-3.5 text-white shrink-0 mt-0.5" />
+                          <span>{ach}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

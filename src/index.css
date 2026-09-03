@@ -19,6 +19,18 @@ h3,
 h4,
 .font-display {
   font-family: 'Syne', sans-serif;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.95), 0 2px 6px rgba(0, 0, 0, 0.85);
+}
+
+h1 span,
+h2 span,
+h3 span,
+h4 span {
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.95), 0 2px 6px rgba(0, 0, 0, 0.85);
+}
+
+p {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
 }
 
 /* Custom Scrollbar */
@@ -42,14 +54,15 @@ h4,
 /* Custom Utilities */
 @layer components {
   .glass-card {
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(7px);
-    -webkit-backdrop-filter: blur(7px);
+    background: rgba(6, 8, 14, 0.78);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
     position: relative;
     overflow: hidden;
+    isolation: isolate;
   }
 
   .glass-card::before {
@@ -66,7 +79,7 @@ h4,
       transparent
     );
     pointer-events: none;
-    z-index: 10;
+    z-index: 1;
   }
 
   .glass-card::after {
@@ -83,16 +96,17 @@ h4,
       rgba(255, 255, 255, 0.3)
     );
     pointer-events: none;
-    z-index: 10;
+    z-index: 1;
   }
 }
 
 .glass-panel {
-  background: rgba(12, 16, 26, 0.65);
+  background: rgba(6, 8, 14, 0.78);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  isolation: isolate;
 }
 
 /* Universal 3D Box Shadow for all dark containers, inputs, pills and boxes */
@@ -110,8 +124,8 @@ h4,
 }
 
 .glass-panel-hover:hover {
-  background: rgba(20, 28, 42, 0.82);
-  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(10, 14, 22, 0.88);
+  border-color: rgba(255, 255, 255, 0.32);
   box-shadow: 0 0 35px rgba(255, 255, 255, 0.12);
 }
 
@@ -134,39 +148,110 @@ h4,
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
 
-/* Progressive Section Dimming Arc & Heavy Frosted Glass Backdrop Blur */
-.section-dimming-1 {
-  background: linear-gradient(180deg, transparent 0%, rgba(14, 18, 28, 0.35) 100%);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-.section-dimming-2 {
-  background: linear-gradient(180deg, rgba(14, 18, 28, 0.35) 0%, rgba(10, 14, 22, 0.55) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-.section-dimming-3 {
-  background: linear-gradient(180deg, rgba(10, 14, 22, 0.55) 0%, rgba(8, 11, 18, 0.72) 100%);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-}
-
-.section-dimming-4 {
-  background: linear-gradient(180deg, rgba(8, 11, 18, 0.72) 0%, rgba(5, 7, 13, 0.85) 100%);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-}
-
+/* Clear Transparent Backgrounds (No Section-Level Blur Overlay) */
+.section-dimming-1,
+.section-dimming-2,
+.section-dimming-3,
+.section-dimming-4,
 .section-dimming-5 {
-  background: linear-gradient(180deg, rgba(5, 7, 13, 0.85) 0%, rgba(3, 4, 8, 0.94) 100%);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 /* Zero Border Seams across all sections */
 .section-divider {
   border-top: none !important;
   border-bottom: none !important;
+}
+
+/* ==========================================================================
+   INTERACTIVE LIGHTING & GLOW SYSTEM (Cards & Text Hover)
+   ========================================================================== */
+
+/* 1. CARD LIGHTING & HOVER ELEVATION */
+.glass-card,
+.glass-panel,
+.dark-3d-box {
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), 
+              box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), 
+              border-color 0.4s ease,
+              background-color 0.4s ease;
+  isolation: isolate;
+}
+
+.glass-card:hover,
+.glass-panel:hover,
+.dark-3d-box:hover {
+  transform: translateY(-8px) scale(1.015);
+  border-color: rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 
+    0 25px 50px -10px rgba(0, 0, 0, 0.85),
+    0 50px 100px -20px rgba(50, 50, 93, 0.45),
+    0 0 35px 2px rgba(255, 255, 255, 0.25),
+    rgba(50, 50, 93, 0.35) 0px 50px 100px -20px, 
+    rgba(0, 0, 0, 0.4) 0px 30px 60px -30px, 
+    rgba(255, 255, 255, 0.3) 0px -2px 10px 0px inset !important;
+}
+
+/* Light Beam Top Line Highlight Flare */
+.glass-card::before,
+.glass-panel::before {
+  transition: opacity 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.glass-card:hover::before,
+.glass-panel:hover::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 20%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.4) 80%,
+    transparent 100%
+  ) !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Card Radial Light Spot Glare */
+.glass-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.03) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: scale(0.8);
+  z-index: 1;
+}
+
+.glass-card:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 2. TEXT & HEADING HOVER BLACK SHADOW DROP */
+h1, h2, h3, h4, .font-display, .hover-text-glow {
+  transition: text-shadow 0.35s ease, transform 0.35s ease;
+}
+
+h1:hover, h2:hover, h3:hover, h4:hover, .font-display:hover, .hover-text-glow:hover {
+  text-shadow: 
+    0 6px 18px rgba(0, 0, 0, 0.95),
+    0 12px 32px rgba(0, 0, 0, 0.85),
+    0 0 20px rgba(0, 0, 0, 1) !important;
+}
+
+.text-gradient:hover,
+.text-light-shimmer:hover {
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.95));
 }

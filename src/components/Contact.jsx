@@ -32,9 +32,6 @@ function Contact() {
 
   return (
     <section id="contact" className="relative py-32 px-6 md:px-12 section-dimming-5 z-20 overflow-hidden section-divider">
-      {/* Micro sliding drops (1 or 2 drops) */}
-      <GlassWallRainDrip density="micro" />
-
       {/* Ambient background light */}
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-white/5 rounded-full blur-[160px] pointer-events-none"></div>
 
@@ -51,7 +48,7 @@ function Contact() {
               </div>
               <h2 className="font-display text-5xl sm:text-7xl font-bold tracking-tight text-white uppercase leading-none">
                 Let's Build <br />
-                <span className="text-zinc-500">Together.</span>
+                <span className="text-zinc-400">Together.</span>
               </h2>
             </div>
 
@@ -61,30 +58,33 @@ function Contact() {
 
             {/* Quick Email Copy Card */}
             <div
-              className="glass-card glass-panel w-full h-auto p-6 rounded-3xl border border-white/15 space-y-3"
-              style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+              className="glass-card glass-panel w-full h-auto p-6 rounded-3xl border border-white/15 space-y-3 relative overflow-hidden"
+              style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset', transform: 'translateZ(0)' }}
             >
-              <div className="text-xs font-mono uppercase text-zinc-400">Direct Contact Email</div>
-              <div className="flex items-center justify-between gap-4 bg-zinc-900/90 p-4 rounded-2xl border border-white/10">
-                <span className="font-mono text-sm sm:text-base text-white truncate">
-                  {emailAddress}
-                </span>
-                <button
-                  onClick={handleCopyEmail}
-                  className="px-4 py-2 rounded-xl bg-white text-black font-semibold text-xs uppercase tracking-wider hover:bg-zinc-200 transition-all flex items-center gap-2 shrink-0"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="w-4 h-4 text-emerald-600" />
-                      <span>Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4" />
-                      <span>Copy</span>
-                    </>
-                  )}
-                </button>
+              <GlassWallRainDrip density="card" />
+              <div className="relative z-10 space-y-3" style={{ transform: 'translateZ(0)' }}>
+                <div className="text-xs font-mono uppercase text-zinc-400">Direct Contact Email</div>
+                <div className="flex items-center justify-between gap-4 bg-zinc-900/90 p-4 rounded-2xl border border-white/10">
+                  <span className="font-mono text-sm sm:text-base text-white truncate">
+                    {emailAddress}
+                  </span>
+                  <button
+                    onClick={handleCopyEmail}
+                    className="px-4 py-2 rounded-xl bg-white text-black font-semibold text-xs uppercase tracking-wider hover:bg-zinc-200 transition-all flex items-center gap-2 shrink-0"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-600" />
+                        <span>Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -126,9 +126,11 @@ function Contact() {
 
           {/* Right Column: Contact Form */}
           <div
-            className="glass-card glass-panel w-full h-auto p-8 sm:p-10 rounded-3xl border border-white/15 shadow-2xl relative"
-            style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+            className="glass-card glass-panel w-full h-auto p-8 sm:p-10 rounded-3xl border border-white/15 shadow-2xl relative overflow-hidden"
+            style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset', transform: 'translateZ(0)' }}
           >
+            <GlassWallRainDrip density="card" />
+            <div className="relative z-10" style={{ transform: 'translateZ(0)' }}>
 
             {submitted ? (
               <div className="py-16 text-center space-y-4 animate-in fade-in zoom-in duration-300">
@@ -218,6 +220,7 @@ function Contact() {
                 </button>
               </form>
             )}
+            </div>
 
           </div>
 

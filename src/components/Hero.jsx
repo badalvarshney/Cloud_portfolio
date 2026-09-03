@@ -44,10 +44,24 @@ export default function Hero({ scrollProgress }) {
         }
       }
 
-      // 3. ONLY About Section Top Border Line (Rain drops splash on this line!)
-      const aboutEl = document.querySelector('#about');
-      if (aboutEl) {
-        const r = aboutEl.getBoundingClientRect();
+      // 3. ALL Cards across all sections (.glass-card & .glass-panel) for Rain Splash Collisions
+      const cardEls = document.querySelectorAll('.glass-card, .glass-panel');
+      cardEls.forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.top > -50 && r.top < window.innerHeight + 50) {
+          rects.push({
+            left: r.left,
+            right: r.right,
+            top: r.top,
+            bottom: r.top + 3
+          });
+        }
+      });
+
+      // 4. Footer Section Top Border Line (Rain drops splash on top of the Footer line!)
+      const footerEl = document.querySelector('#footer');
+      if (footerEl) {
+        const r = footerEl.getBoundingClientRect();
         if (r.top > -50 && r.top < window.innerHeight + 50) {
           rects.push({
             left: 0,
@@ -176,13 +190,11 @@ export default function Hero({ scrollProgress }) {
       {/* Sticky Hero Viewport */}
       <div className="sticky top-0 h-screen w-full flex flex-col justify-between items-center px-6 md:px-12 py-20 overflow-hidden z-20">
 
-        {/* Text Rain Canvas Engine (Triggers on BADAL VARSHNEY emergence & STAYS ON continuously) */}
-        {hasRainStarted && (
-          <TextRainCanvas
-            letterRects={letterRects}
-            isTextVisible={hasRainStarted}
-          />
-        )}
+        {/* Continuous Natural Rain Canvas Engine */}
+        <TextRainCanvas
+          letterRects={letterRects}
+          isTextVisible={true}
+        />
 
         {/* Top Spacer */}
         <div className="h-10"></div>

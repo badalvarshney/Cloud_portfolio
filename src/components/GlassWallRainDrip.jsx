@@ -171,7 +171,10 @@ export default function GlassWallRainDrip({ density = 'full' }) {
       let dewDivisor = 1400;
       let beadDivisor = 28;
 
-      if (density === 'full') {
+      if (density === 'card') {
+        dewDivisor = 2600; // Significantly reduces ruki hui dew drops on cards
+        beadDivisor = 65;   // Keeps static water beads minimal & clean
+      } else if (density === 'full') {
         dewDivisor = 320;   // 2.5x More Lifecycle Dew Drops
         beadDivisor = 7;    // 2.3x More 3D Water Beads
       } else if (density === 'moderate') {
@@ -228,7 +231,9 @@ export default function GlassWallRainDrip({ density = 'full' }) {
       ambientRainStreaks.length = 0;
 
       let slidingCount = Math.floor(w / 18) + 32; // Double sliding water drops
-      if (density === 'moderate') {
+      if (density === 'card') {
+        slidingCount = Math.floor(w / 70) + 3;
+      } else if (density === 'moderate') {
         slidingCount = Math.floor(w / 40) + 16;
       } else if (density === 'low') {
         slidingCount = Math.floor(w / 80) + 8;
@@ -287,29 +292,18 @@ export default function GlassWallRainDrip({ density = 'full' }) {
 
       const w = canvas.width;
       const h = canvas.height;
-      const now = performance.now();
 
-      const cycleTime = (now * 0.001) % 24;
-      let rawStorm = 0;
-      if (cycleTime < 10) {
-        rawStorm = 0;
-      } else if (cycleTime < 14) {
-        rawStorm = (cycleTime - 10) / 4;
-      } else if (cycleTime < 20) {
-        rawStorm = 1.0;
-      } else {
-        rawStorm = 1.0 - (cycleTime - 20) / 4;
-      }
-      const smoothStorm = 0.5 - 0.5 * Math.cos(rawStorm * Math.PI);
+      // Constant Normal Rain & Dew Rate
+      const smoothStorm = 0;
 
       ctx.clearRect(0, 0, w, h);
 
       // A. Ambient Background Rain Streaks
       ctx.lineCap = 'round';
-      const activeStreakCount = Math.floor(ambientRainStreaks.length * (0.25 + smoothStorm * 0.75));
+      const activeStreakCount = ambientRainStreaks.length;
       for (let k = 0; k < activeStreakCount; k++) {
         const streak = ambientRainStreaks[k];
-        const currentVy = streak.baseVy * (1.0 + smoothStorm * 1.4);
+        const currentVy = streak.baseVy;
         streak.y += currentVy;
 
         if (streak.y > h + streak.length) {
@@ -320,16 +314,16 @@ export default function GlassWallRainDrip({ density = 'full' }) {
         const verticalFade = Math.max(0.2, 1.0 - (Math.max(0, streak.y) / h) * 0.45);
         ctx.beginPath();
         ctx.moveTo(streak.x, streak.y);
-        ctx.lineTo(streak.x, streak.y + streak.length * (1.0 + smoothStorm * 0.6));
-        ctx.strokeStyle = `rgba(180, 215, 245, ${(streak.baseOpacity + smoothStorm * 0.12) * verticalFade})`;
+        ctx.lineTo(streak.x, streak.y + streak.length);
+        ctx.strokeStyle = `rgba(180, 215, 245, ${streak.baseOpacity * verticalFade})`;
         ctx.lineWidth = 1.0;
         ctx.stroke();
       }
 
       // B. MULTI-TIER DYNAMIC LIFECYCLE DEW DROPS (HARDWARE ACCELERATED SPRITE BLITTING)
-      const activeDewCount = Math.floor(dynamicDewDrops.length * (0.20 + smoothStorm * 0.80));
-      const currentFadeSpeedMult = 1.0 + smoothStorm * 2.5;
-      const currentHoldStep = 1 + Math.floor(smoothStorm * 2.0);
+      const activeDewCount = dynamicDewDrops.length;
+      const currentFadeSpeedMult = 1.0;
+      const currentHoldStep = 1;
 
       for (let d = 0; d < activeDewCount; d++) {
         const dew = dynamicDewDrops[d];
@@ -386,7 +380,7 @@ export default function GlassWallRainDrip({ density = 'full' }) {
       }
 
       // C. Render Static Water Beads (Hardware Accelerated)
-      const activeBeadCount = Math.floor(staticBeads.length * (0.25 + smoothStorm * 0.75));
+      const activeBeadCount = staticBeads.length;
       for (let b = 0; b < activeBeadCount; b++) {
         const bead = staticBeads[b];
         drawStaticWaterBead(ctx, bead.x, bead.y, bead.rx, bead.ry, bead.opacity);
@@ -401,7 +395,7 @@ export default function GlassWallRainDrip({ density = 'full' }) {
           continue;
         }
 
-        const currentVy = drop.baseVy * (1.0 + smoothStorm * 1.25);
+        const currentVy = drop.baseVy;
 
         if (drop.pauseTimer > 0) {
           drop.pauseTimer -= (1 + Math.floor(smoothStorm * 2));

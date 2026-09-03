@@ -7,7 +7,10 @@ function Footer() {
   };
 
   return (
-    <footer className="relative py-12 px-6 md:px-12 bg-black/95 text-zinc-400 text-xs z-20 section-divider">
+    <footer id="footer" className="relative py-12 px-6 md:px-12 bg-black/95 text-zinc-400 text-xs z-20 section-divider">
+      {/* Luminous Specular Glass Top Highlight Line for Rain Splash */}
+      <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none shadow-[0_0_12px_rgba(255,255,255,0.4)]"></div>
+
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         
         {/* Brand */}

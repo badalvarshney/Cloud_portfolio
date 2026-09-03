@@ -1,13 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 
-export default function TextRainCanvas({ letterRects = [], isTextVisible = false }) {
+export default function TextRainCanvas({ letterRects = [], isTextVisible = true }) {
   const canvasRef = useRef(null);
   const letterRectsRef = useRef(letterRects);
-  const isTextVisibleRef = useRef(isTextVisible);
 
   useEffect(() => {
     letterRectsRef.current = letterRects;
-    isTextVisibleRef.current = isTextVisible;
   });
 
   useEffect(() => {
@@ -16,7 +14,6 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
 
     const ctx = canvas.getContext('2d');
     let animationFrameId;
-    let isVisible = true;
     let lastTime = performance.now();
 
     const resize = () => {
@@ -27,15 +24,15 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
     resize();
     window.addEventListener('resize', resize);
 
-    // Dynamic Rain Particle Pool (350 max drops)
-    const maxDropCount = 350;
+    // Dynamic Rain Particle Pool (300 drops)
+    const maxDropCount = 300;
     const drops = [];
     for (let i = 0; i < maxDropCount; i++) {
       drops.push({
         x: Math.random() * (window.innerWidth + 240) - 120,
         y: Math.random() * window.innerHeight,
-        baseVy: Math.random() * 6 + 10,
-        baseVx: -1.6 - Math.random() * 1.0,
+        baseVy: Math.random() * 5 + 8,
+        baseVx: -1.4 - Math.random() * 0.8,
         baseLength: Math.random() * 8 + 6,
         width: Math.random() * 1.4 + 0.8,
         opacity: Math.random() * 0.45 + 0.45,
@@ -43,29 +40,29 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
       });
     }
 
-    // Splash Particles (droplets bouncing off name letters)
+    // Splash Particles (droplets bouncing off name letters & cards)
     const splashParticles = [];
-    // Splash Rings (water ripples on name letters)
+    // Splash Rings (water ripples)
     const splashRings = [];
 
-    const spawnLetterSplash = (impactX, impactY, stormFactor = 0) => {
+    const spawnLetterSplash = (impactX, impactY) => {
       splashRings.push({
         x: impactX,
         y: impactY,
         r: 2,
-        maxR: Math.random() * (8 * stormFactor + 12) + 8,
-        opacity: 0.9 + stormFactor * 0.1
+        maxR: Math.random() * 10 + 8,
+        opacity: 0.95
       });
 
-      const particleCount = Math.floor(Math.random() * 3) + 4 + Math.floor(stormFactor * 3);
+      const particleCount = Math.floor(Math.random() * 3) + 4;
       for (let p = 0; p < particleCount; p++) {
         splashParticles.push({
           x: impactX,
           y: impactY,
-          vx: (Math.random() - 0.5) * (5.0 + stormFactor * 2.0),
-          vy: -(Math.random() * (4.0 + stormFactor * 2.0) + 1.5),
-          r: Math.random() * (1.6 + stormFactor * 0.8) + 0.8,
-          gravity: 0.24 + stormFactor * 0.04,
+          vx: (Math.random() - 0.5) * 5.0,
+          vy: -(Math.random() * 4.0 + 1.5),
+          r: Math.random() * 1.6 + 0.8,
+          gravity: 0.24,
           life: 1.0,
           decay: Math.random() * 0.04 + 0.03
         });
@@ -73,49 +70,32 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
     };
 
     const render = (now) => {
-      if (!isVisible) return;
       animationFrameId = requestAnimationFrame(render);
 
       const delta = Math.min(32, now - lastTime);
       lastTime = now;
       const speedFactor = delta / 16.66;
 
-      const cycleTime = (now * 0.001) % 24;
-      let rawStorm = 0;
-      if (cycleTime < 10) {
-        rawStorm = 0;
-      } else if (cycleTime < 14) {
-        rawStorm = (cycleTime - 10) / 4;
-      } else if (cycleTime < 20) {
-        rawStorm = 1.0;
-      } else {
-        rawStorm = 1.0 - (cycleTime - 20) / 4;
-      }
-
-      const smoothStorm = 0.5 - 0.5 * Math.cos(rawStorm * Math.PI);
-      const activeDropCount = Math.floor(160 + smoothStorm * 190);
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const currentRects = letterRectsRef.current;
-      const currentTextVisible = isTextVisibleRef.current;
 
       ctx.lineWidth = 1.2;
       ctx.lineCap = 'round';
 
-      for (let i = 0; i < activeDropCount; i++) {
+      for (let i = 0; i < maxDropCount; i++) {
         const drop = drops[i];
         const prevY = drop.y;
 
-        const currentVy = drop.baseVy * (1.0 + smoothStorm * 1.35);
-        const currentVx = drop.baseVx * (1.0 + smoothStorm * 0.6);
-        const currentLength = drop.baseLength * (1.0 + smoothStorm * 0.4);
+        const currentVy = drop.baseVy;
+        const currentVx = drop.baseVx;
+        const currentLength = drop.baseLength;
 
         drop.x += currentVx * speedFactor;
         drop.y += currentVy * speedFactor;
 
-        // Collision detection ONLY for BADAL VARSHNEY name letters in Hero section
-        if (currentTextVisible && currentRects && currentRects.length > 0) {
+        // Collision detection for Name letters, Action Buttons, All Cards, and Footer line
+        if (currentRects && currentRects.length > 0) {
           for (let r = 0; r < currentRects.length; r++) {
             const rect = currentRects[r];
             if (!rect) continue;
@@ -125,13 +105,13 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
             const relTop = rect.top;
 
             if (
-              Math.abs(relTop - drop.lastSplashedY) > 20 &&
+              Math.abs(relTop - drop.lastSplashedY) > 15 &&
               drop.x >= relLeft - 4 &&
               drop.x <= relRight + 4 &&
               prevY <= relTop + 4 &&
               drop.y >= relTop - 4
             ) {
-              spawnLetterSplash(drop.x, relTop, smoothStorm);
+              spawnLetterSplash(drop.x, relTop);
               drop.lastSplashedY = relTop;
               break;
             }
@@ -149,13 +129,13 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
         ctx.beginPath();
         ctx.moveTo(drop.x, drop.y);
         ctx.lineTo(drop.x - currentVx * 1.5, drop.y - currentLength);
-        ctx.strokeStyle = `rgba(224, 242, 254, ${drop.opacity + smoothStorm * 0.15})`;
-        ctx.lineWidth = drop.width + smoothStorm * 0.5;
+        ctx.strokeStyle = `rgba(224, 242, 254, ${drop.opacity})`;
+        ctx.lineWidth = drop.width;
         ctx.stroke();
         ctx.restore();
       }
 
-      // Update & Draw Bouncing Splash Particles off Name Letters
+      // Update & Draw Bouncing Splash Particles off Name Letters & Cards
       for (let s = splashParticles.length - 1; s >= 0; s--) {
         const sp = splashParticles[s];
         sp.x += sp.vx * speedFactor;
@@ -171,16 +151,16 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
         ctx.save();
         ctx.beginPath();
         ctx.arc(sp.x, sp.y, sp.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(224, 242, 254, ${sp.life * (0.85 + smoothStorm * 0.15)})`;
+        ctx.fillStyle = `rgba(224, 242, 254, ${sp.life * 0.85})`;
         ctx.fill();
         ctx.restore();
       }
 
-      // Update & Draw Expanding Splash Ripple Rings on Name Letters
+      // Update & Draw Expanding Splash Ripple Rings on Name Letters & Cards
       for (let r = splashRings.length - 1; r >= 0; r--) {
         const ring = splashRings[r];
-        ring.r += (0.6 + smoothStorm * 0.4) * speedFactor;
-        ring.opacity -= (0.04 - smoothStorm * 0.01) * speedFactor;
+        ring.r += 0.6 * speedFactor;
+        ring.opacity -= 0.04 * speedFactor;
 
         if (ring.opacity <= 0 || ring.r >= ring.maxR) {
           splashRings.splice(r, 1);
@@ -197,28 +177,9 @@ export default function TextRainCanvas({ letterRects = [], isTextVisible = false
       }
     };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry.isIntersecting) {
-          if (!isVisible) {
-            isVisible = true;
-            lastTime = performance.now();
-            animationFrameId = requestAnimationFrame(render);
-          }
-        } else {
-          isVisible = false;
-          if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        }
-      },
-      { threshold: 0.01 }
-    );
-
-    observer.observe(canvas);
     animationFrameId = requestAnimationFrame(render);
 
     return () => {
-      observer.disconnect();
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resize);
     };

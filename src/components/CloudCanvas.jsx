@@ -616,18 +616,10 @@ export default function CloudCanvas({ onScrollProgress }) {
           clearRatio = 0.25;
         }
 
-        // Keep clouds rich & visible throughout all sections
-        let sectionDim = 1.0;
-        if (progress > 0.65) {
-          const dimProgress = Math.min(1.0, (progress - 0.65) / 0.25);
-          const smoothDim = 0.5 - 0.5 * Math.cos(dimProgress * Math.PI);
-          sectionDim = 1.0 - smoothDim * 0.15; // Retains 85% full opacity
-        }
-
+        // Keep clouds 100% crisp, rich & visible throughout all sections
         cloudParticles.forEach((particle) => {
-          particle.position.y = particle.userData.initialY + progress * 480;
           const bOp = particle.userData.baseOpacity || 0.90;
-          particle.material.opacity = bOp * (1.0 - clearRatio * 0.15) * sectionDim;
+          particle.material.opacity = bOp;
 
           const shiftAmount = clearRatio * 80; // Gentle 3D parallax drift
           if (particle.userData.initialX < 0) {
@@ -722,6 +714,11 @@ export default function CloudCanvas({ onScrollProgress }) {
       mouseX += (targetMouseX - mouseX) * 0.05;
       mouseY += (targetMouseY - mouseY) * 0.05;
       camera.position.x = mouseX * 0.4;
+
+      // Dynamically move clouds downward as user scrolls down the entire page
+      const scrollMax = (document.documentElement.scrollHeight - window.innerHeight) || 1;
+      const scrollRatio = window.scrollY / scrollMax;
+      cloudGroup.position.y = -scrollRatio * 750;
 
       cloudParticles.forEach((particle) => {
         particle.material.rotation += particle.userData.rotationSpeed;

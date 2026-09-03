@@ -69,9 +69,6 @@ const TECH_CATEGORIES = [
 function Skills() {
   return (
     <section id="skills" className="relative py-32 px-6 md:px-12 section-dimming-3 z-20 overflow-hidden section-divider">
-      {/* Low sliding water droplets */}
-      <GlassWallRainDrip density="low" />
-
       <div className="max-w-7xl mx-auto relative z-10">
 
         {/* Section Title */}
@@ -82,7 +79,7 @@ function Skills() {
               <span>03 // Skills & Tech Stack</span>
             </div>
             <h2 className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-white uppercase">
-              Comprehensive <span className="text-zinc-500">Tech Stack</span>
+              Comprehensive <span className="text-zinc-400">Tech Stack</span>
             </h2>
           </div>
 
@@ -99,45 +96,49 @@ function Skills() {
               <div
                 key={item.category}
                 className="glass-card glass-panel w-full h-auto p-8 rounded-3xl border border-white/15 glass-panel-hover flex flex-col justify-between group relative overflow-hidden"
-                style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset' }}
+                style={{ boxShadow: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset', transform: 'translateZ(0)' }}
               >
+                <GlassWallRainDrip density="card" />
+
                 {/* Background Subtle Glow */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all pointer-events-none"></div>
 
-                <div>
-                  {/* Category Header */}
-                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
-                    <div className="flex items-center gap-3">
-                      <div className="p-3 rounded-2xl bg-zinc-900 border border-white/15 text-white group-hover:bg-white group-hover:text-black transition-all">
-                        <Icon className="w-5 h-5" />
+                <div className="relative z-10 flex flex-col justify-between h-full" style={{ transform: 'translateZ(0)' }}>
+                  <div>
+                    {/* Category Header */}
+                    <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                      <div className="flex items-center gap-3">
+                        <div className="p-3 rounded-2xl bg-zinc-900 border border-white/15 text-white group-hover:bg-white group-hover:text-black transition-all">
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-display text-lg font-bold text-white">{item.category}</h3>
+                          <span className="text-[10px] font-mono text-zinc-500">0{idx + 1} // Stack Category</span>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-display text-lg font-bold text-white">{item.category}</h3>
-                        <span className="text-[10px] font-mono text-zinc-500">0{idx + 1} // Stack Category</span>
-                      </div>
+                      <span className="text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-white/10 px-2.5 py-1 rounded-full shrink-0">
+                        {item.badge}
+                      </span>
                     </div>
-                    <span className="text-[10px] font-mono text-zinc-400 bg-zinc-900 border border-white/10 px-2.5 py-1 rounded-full shrink-0">
-                      {item.badge}
-                    </span>
+
+                    {/* Skills Pill Badges */}
+                    <div className="flex flex-wrap gap-2.5">
+                      {item.skills.map((skill) => (
+                        <div
+                          key={skill}
+                          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-900/90 border border-white/10 text-xs font-mono text-zinc-200 group-hover:border-white/30 hover:bg-white hover:text-black transition-all cursor-default"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                          <span>{skill}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Skills Pill Badges */}
-                  <div className="flex flex-wrap gap-2.5">
-                    {item.skills.map((skill) => (
-                      <div
-                        key={skill}
-                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-900/90 border border-white/10 text-xs font-mono text-zinc-200 group-hover:border-white/30 hover:bg-white hover:text-black transition-all cursor-default"
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-                        <span>{skill}</span>
-                      </div>
-                    ))}
+                  <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-zinc-500">
+                    <span>{item.skills.length} Technologies</span>
+                    <span className="text-zinc-400 font-semibold">Production Ready</span>
                   </div>
-                </div>
-
-                <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-zinc-500">
-                  <span>{item.skills.length} Technologies</span>
-                  <span className="text-zinc-400 font-semibold">Production Ready</span>
                 </div>
               </div>
             );
